@@ -9,6 +9,7 @@ const MERGED_SCRIPT = `// ==UserScript==
 // @version      12.5
 // @description  Ultimate Chrome fingerprint hardening for Google AI services - Full Sovereign Hybrid
 // @author       Anonymous
+// @license      MIT
 // @match        https://*.google.com/*
 // @match        https://gemini.google.com/*
 // @match        https://ai.google.dev/*
@@ -333,16 +334,7 @@ export default function App() {
   };
 
   const handleInstallScript = () => {
-    const blob = new Blob([MERGED_SCRIPT], { type: 'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'google-ai-identity.user.js';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('success', 'Script downloaded! Please open it with your UserScript manager.');
+    window.location.href = 'https://raw.githubusercontent.com/RE3CON/Gemini-AI/main/google-ai-identity.user.js';
   };
 
   const handleGenerateLogo = async () => {

@@ -45,3 +45,7 @@ We invite the community to join and help improve this project! Whether you're fi
 - **Fork the repository** to experiment with your own ideas.
 - **Open an issue** to discuss potential changes or report bugs.
 - **Submit a Pull Request!** Let's build the ultimate privacy shield together.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

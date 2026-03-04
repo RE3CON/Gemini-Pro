@@ -4,6 +4,7 @@
 // @version      12.5
 // @description  Ultimate Chrome fingerprint hardening for Google AI services - Full Sovereign Hybrid
 // @author       Anonymous
+// @license      MIT
 // @match        https://*.google.com/*
 // @match        https://gemini.google.com/*
 // @match        https://ai.google.dev/*
