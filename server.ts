@@ -24,21 +24,59 @@ async function startServer() {
     try {
       const octokit = new Octokit({ auth: token });
 
-      // 1. Get the current commit SHA
-      const { data: refData } = await octokit.rest.git.getRef({
-        owner: repoOwner,
-        repo: repoName,
-        ref: `heads/${branch}`,
-      });
-      const latestCommitSha = refData.object.sha;
+      // 1. Check if repository is empty or branch doesn't exist
+      let isEmpty = false;
+      let latestCommitSha: string | null = null;
+      let baseTreeSha: string | undefined = undefined;
 
-      // 2. Get the tree SHA for the latest commit
-      const { data: commitData } = await octokit.rest.git.getCommit({
-        owner: repoOwner,
-        repo: repoName,
-        commit_sha: latestCommitSha,
-      });
-      const baseTreeSha = commitData.tree.sha;
+      try {
+        const { data: refData } = await octokit.rest.git.getRef({
+          owner: repoOwner,
+          repo: repoName,
+          ref: `heads/${branch}`,
+        });
+        latestCommitSha = refData.object.sha;
+
+        const { data: commitData } = await octokit.rest.git.getCommit({
+          owner: repoOwner,
+          repo: repoName,
+          commit_sha: latestCommitSha,
+        });
+        baseTreeSha = commitData.tree.sha;
+      } catch (e: any) {
+        if (e.status === 404 || (e.message && e.message.includes("empty"))) {
+          isEmpty = true;
+        } else {
+          throw e;
+        }
+      }
+
+      if (isEmpty) {
+        console.log("Repository is empty. Initializing with README.md...");
+        await octokit.rest.repos.createOrUpdateFileContents({
+          owner: repoOwner,
+          repo: repoName,
+          path: "README.md",
+          message: "Initial commit",
+          content: Buffer.from(`# ${repoName}\nInitialized by Google AI Identity Hardener`).toString("base64"),
+          branch: branch,
+        });
+        
+        // Re-fetch the newly created commit
+        const { data: refData } = await octokit.rest.git.getRef({
+          owner: repoOwner,
+          repo: repoName,
+          ref: `heads/${branch}`,
+        });
+        latestCommitSha = refData.object.sha;
+
+        const { data: commitData } = await octokit.rest.git.getCommit({
+          owner: repoOwner,
+          repo: repoName,
+          commit_sha: latestCommitSha,
+        });
+        baseTreeSha = commitData.tree.sha;
+      }
 
       // 3. Read files to push (recursive)
       const filesToPush: { path: string; content: string; mode: "100644" | "100755" | "040000" | "160000" | "120000"; type: "blob" | "tree" | "commit" }[] = [];
@@ -47,7 +85,7 @@ async function startServer() {
         const entries = await fs.readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
           const fullPath = path.join(dir, entry.name);
-          const relativePath = path.join(base, entry.name);
+          const relativePath = path.join(base, entry.name).replace(/\\/g, '/');
 
           // Skip node_modules, .git, dist
           if (["node_modules", ".git", "dist", ".next"].includes(entry.name)) continue;
@@ -100,7 +138,7 @@ async function startServer() {
         repo: repoName,
         message: "Update from Google AI Identity Hardener",
         tree: newTreeData.sha,
-        parents: [latestCommitSha],
+        parents: latestCommitSha ? [latestCommitSha] : [],
       });
 
       // 7. Update the reference
@@ -113,8 +151,29 @@ async function startServer() {
 
       res.json({ success: true, commitSha: newCommitData.sha });
     } catch (error: any) {
-      console.error("GitHub Push Error:", error);
-      res.status(500).json({ error: error.message || "Failed to push to GitHub" });
+      console.error("GitHub Push Error:", error.message || error);
+      
+      let userMessage = "Failed to push to GitHub due to an unexpected error.";
+      let statusCode = 500;
+
+      if (error.status === 401) {
+        userMessage = "Invalid GitHub token. Please check your credentials.";
+        statusCode = 401;
+      } else if (error.status === 403) {
+        userMessage = "Forbidden. Ensure your token has 'repo' scope and you have access to the repository.";
+        statusCode = 403;
+      } else if (error.status === 404) {
+        userMessage = `Repository ${repoOwner}/${repoName} not found.`;
+        statusCode = 404;
+      } else if (error.status === 409) {
+        userMessage = "Git conflict detected. The repository might be in an inconsistent state.";
+        statusCode = 409;
+      } else if (error.message && error.message.includes("Bad credentials")) {
+        userMessage = "Bad credentials. Your token might be expired or revoked.";
+        statusCode = 401;
+      }
+
+      res.status(statusCode).json({ error: userMessage, details: error.message });
     }
   });
 
@@ -125,6 +184,12 @@ async function startServer() {
       appType: "spa",
     });
     app.use(vite.middlewares);
+  } else {
+    // Serve static files in production
+    app.use(express.static("dist"));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve("dist/index.html"));
+    });
   }
 
   app.listen(PORT, "0.0.0.0", () => {

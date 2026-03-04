@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Shield, Copy, Check, Terminal, Cpu, Globe, Lock, Zap, Github, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, Copy, Check, Terminal, Cpu, Globe, Lock, Zap, Github, Loader2, XCircle, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const MERGED_SCRIPT = `// ==UserScript==
@@ -263,11 +263,28 @@ export default function App() {
   const [githubToken, setGithubToken] = useState('');
   const [isPushing, setIsPushing] = useState(false);
   const [pushStatus, setPushStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  
+  // Global Toast State
+  const [toast, setToast] = useState<{ id: number; type: 'success' | 'error' | 'info'; message: string } | null>(null);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(MERGED_SCRIPT);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const showToast = (type: 'success' | 'error' | 'info', message: string) => {
+    const id = Date.now();
+    setToast({ id, type, message });
+    setTimeout(() => {
+      setToast((current) => (current?.id === id ? null : current));
+    }, 4000);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(MERGED_SCRIPT);
+      setCopied(true);
+      showToast('success', 'Script copied to clipboard successfully!');
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      showToast('error', 'Failed to copy to clipboard. Please select the text manually.');
+    }
   };
 
   const handleGithubPush = async () => {
@@ -278,6 +295,9 @@ export default function App() {
 
     setIsPushing(true);
     setPushStatus(null);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     try {
       const response = await fetch('/api/github/push', {
@@ -291,18 +311,29 @@ export default function App() {
           repoName: 'Gemini-AI',
           branch: 'main',
         }),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       const data = await response.json();
 
       if (response.ok) {
         setPushStatus({ type: 'success', message: `Successfully pushed to RE3CON/Gemini-AI! Commit: ${data.commitSha.substring(0, 7)}` });
+        showToast('success', 'Codebase successfully deployed to GitHub!');
         setTimeout(() => setShowGithubModal(false), 3000);
       } else {
         setPushStatus({ type: 'error', message: data.error || 'Failed to push to GitHub.' });
+        showToast('error', data.error || 'Deployment failed. Check your token and permissions.');
       }
-    } catch (error) {
-      setPushStatus({ type: 'error', message: 'An unexpected error occurred.' });
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        setPushStatus({ type: 'error', message: 'Request timed out. The repository might be too large or the network is slow.' });
+        showToast('error', 'Connection timed out.');
+      } else {
+        setPushStatus({ type: 'error', message: 'Network error. Please check your connection and try again.' });
+        showToast('error', 'Network error occurred.');
+      }
     } finally {
       setIsPushing(false);
     }
@@ -412,6 +443,23 @@ export default function App() {
           <div>System Status: Operational</div>
           <div>Encryption: AES-256-GCM Equivalent</div>
         </footer>
+
+        {/* Global Toast Notification */}
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl bg-white border border-black/5"
+            >
+              {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
+              {toast.type === 'error' && <XCircle className="w-5 h-5 text-rose-500" />}
+              {toast.type === 'info' && <AlertCircle className="w-5 h-5 text-blue-500" />}
+              <span className="text-sm font-medium text-[#151619]">{toast.message}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* GitHub Modal */}
         <AnimatePresence>
