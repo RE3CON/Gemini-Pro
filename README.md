@@ -9,6 +9,12 @@
   <a href="https://github.com/RE3CON/Gemini-AI/actions">
     <img src="https://img.shields.io/github/actions/workflow/status/RE3CON/Gemini-AI/build-and-release.yml?style=for-the-badge" alt="Build Status" />
   </a>
+  <a href="https://github.com/RE3CON/Gemini-AI/actions/workflows/codeql.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/RE3CON/Gemini-AI/codeql.yml?label=CodeQL&style=for-the-badge" alt="CodeQL" />
+  </a>
+  <a href="https://github.com/RE3CON/Gemini-AI/actions/workflows/lighthouse.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/RE3CON/Gemini-AI/lighthouse.yml?label=Lighthouse&style=for-the-badge" alt="Lighthouse CI" />
+  </a>
   <a href="https://github.com/RE3CON/Gemini-AI/issues">
     <img src="https://img.shields.io/github/issues/RE3CON/Gemini-AI?style=for-the-badge" alt="Issues" />
   </a>
@@ -60,6 +66,13 @@ To compile the web app and extract the UserScript locally:
 
 **Porting & Enhancements:**
 The core logic inside `google-ai-identity.user.js` is highly modular. You can easily port this to a native Chrome/Firefox Extension by wrapping the core IIFE inside a `content_script.js` and adding a `manifest.json`. We encourage the community to prototype new stealth modules (e.g., Canvas/WebGL poisoning) and submit them!
+
+## 3rd Party Integrations & Security
+
+This project utilizes advanced 3rd-party integrations via GitHub Actions to ensure code quality, performance, and security:
+- **[CodeQL Advanced Security](https://github.com/RE3CON/Gemini-AI/actions/workflows/codeql.yml):** Automatically scans the codebase for vulnerabilities, secrets, and security flaws using GitHub's native Semmle engine.
+- **[Lighthouse CI](https://github.com/RE3CON/Gemini-AI/actions/workflows/lighthouse.yml):** Automatically audits the compiled Web App for Performance, Accessibility, Best Practices, and SEO on every commit.
+- **[Dependabot](https://github.com/RE3CON/Gemini-AI/network/dependencies):** Automatically manages and updates NPM packages and GitHub Action versions to patch upstream vulnerabilities.
 
 ## Bug Tracker & Forum
 
