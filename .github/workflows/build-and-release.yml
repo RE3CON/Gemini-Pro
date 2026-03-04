@@ -1,0 +1,57 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Web App
+        run: npm run build
+
+      - name: Extract UserScript
+        run: |
+          cat << 'EOF' > extract.js
+          import fs from 'fs';
+          const appCode = fs.readFileSync('./src/App.tsx', 'utf8');
+          const match = appCode.match(/const MERGED_SCRIPT = `([\s\S]*?)`;/);
+          if (match && match[1]) {
+            fs.writeFileSync('./google-ai-identity.user.js', match[1]);
+            console.log('Successfully extracted UserScript');
+          } else {
+            console.error('Failed to extract script');
+            process.exit(1);
+          }
+          EOF
+          npx tsx extract.js
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app-build
+          path: dist/
+
+      - name: Upload UserScript Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: userscript
+          path: google-ai-identity.user.js
