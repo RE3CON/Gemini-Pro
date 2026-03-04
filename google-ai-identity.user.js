@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Google AI Identity - Golden Master Sovereign (AdGuard Android)
+// @name         Google AI Identity Hardener
 // @namespace    http://tampermonkey.net/
-// @version      12.5 (AdGuard Optimized)
+// @version      12.5
 // @description  Ultimate Chrome fingerprint hardening for Google AI services - Full Sovereign Hybrid
 // @author       Anonymous
 // @match        https://*.google.com/*

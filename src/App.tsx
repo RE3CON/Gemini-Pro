@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from '@google/genai';
 
 const MERGED_SCRIPT = `// ==UserScript==
-// @name         Google AI Identity - Golden Master Sovereign (AdGuard Android)
+// @name         Google AI Identity Hardener
 // @namespace    http://tampermonkey.net/
-// @version      12.5 (AdGuard Optimized)
+// @version      12.5
 // @description  Ultimate Chrome fingerprint hardening for Google AI services - Full Sovereign Hybrid
 // @author       Anonymous
 // @match        https://*.google.com/*
@@ -333,7 +333,7 @@ export default function App() {
   };
 
   const handleInstallScript = () => {
-    const blob = new Blob([MERGED_SCRIPT], { type: 'text/javascript' });
+    const blob = new Blob([MERGED_SCRIPT], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -342,7 +342,7 @@ export default function App() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast('success', 'Script downloaded! Tampermonkey should prompt to install.');
+    showToast('success', 'Script downloaded! Please open it with your UserScript manager.');
   };
 
   const handleGenerateLogo = async () => {
