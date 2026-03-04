@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Copy, Check, Terminal, Cpu, Globe, Lock, Zap, Github, Loader2, XCircle, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Shield, Copy, Check, Terminal, Cpu, Globe, Lock, Zap, Github, Loader2, XCircle, CheckCircle2, AlertCircle, Image as ImageIcon, Download, Maximize, Minimize, AppWindow } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { GoogleGenAI } from '@google/genai';
 
 const MERGED_SCRIPT = `// ==UserScript==
 // @name         Google AI Identity - Golden Master Sovereign (AdGuard Android)
@@ -263,6 +264,10 @@ export default function App() {
   const [githubToken, setGithubToken] = useState('');
   const [isPushing, setIsPushing] = useState(false);
   const [pushStatus, setPushStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [isGeneratingLogo, setIsGeneratingLogo] = useState(false);
+  const [isReaderMode, setIsReaderMode] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   
   // Global Toast State
   const [toast, setToast] = useState<{ id: number; type: 'success' | 'error' | 'info'; message: string } | null>(null);
@@ -275,6 +280,44 @@ export default function App() {
     }, 4000);
   };
 
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // System Dark Mode Detection
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (e.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+    
+    // Initial check
+    handleChange(mediaQuery);
+    
+    // Listen for changes
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
+  const handleInstallPWA = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(MERGED_SCRIPT);
@@ -284,6 +327,55 @@ export default function App() {
     } catch (err) {
       console.error('Failed to copy text: ', err);
       showToast('error', 'Failed to copy to clipboard. Please select the text manually.');
+    }
+  };
+
+  const handleInstallScript = () => {
+    const blob = new Blob([MERGED_SCRIPT], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'google-ai-identity.user.js';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('success', 'Script downloaded! Tampermonkey should prompt to install.');
+  };
+
+  const handleGenerateLogo = async () => {
+    setIsGeneratingLogo(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image',
+        contents: {
+          parts: [
+            {
+              text: 'A highly unique, colorful, and vibrant logo for a cybersecurity application. The design must be completely original, focusing heavily on digital security, privacy, and protection. Incorporate abstract security elements like a futuristic shield, cryptographic keys, or a secure vault, combined with vibrant, multi-colored neon gradients. Vector art style, clean edges, isolated on a transparent background. No text, no words.',
+            },
+          ],
+        },
+      });
+      
+      let found = false;
+      for (const part of response.candidates?.[0]?.content?.parts || []) {
+        if (part.inlineData) {
+          const base64EncodeString = part.inlineData.data;
+          setLogoUrl(`data:image/png;base64,${base64EncodeString}`);
+          showToast('success', 'Logo generated successfully!');
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        showToast('error', 'Failed to generate logo.');
+      }
+    } catch (error: any) {
+      console.error('Error generating logo:', error);
+      showToast('error', 'Error generating logo: ' + error.message);
+    } finally {
+      setIsGeneratingLogo(false);
     }
   };
 
@@ -340,49 +432,77 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E6E6E6] p-4 md:p-8 font-sans text-[#141414]">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#E6E6E6] dark:bg-[#0a0a0a] p-4 md:p-8 font-sans text-[#141414] dark:text-[#f5f5f5] relative overflow-hidden transition-colors duration-300">
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Header Section */}
         <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-6 h-6 text-[#FF4444]" />
+              {logoUrl ? (
+                <img src={logoUrl} alt="App Logo" className="w-8 h-8 rounded-lg shadow-sm border border-black/10" referrerPolicy="no-referrer" />
+              ) : (
+                <Shield className="w-6 h-6 text-[#FF4444]" />
+              )}
               <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#8E9299]">
                 Security Protocol v12.0
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#151619]">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#151619] dark:text-white transition-colors">
               Identity Hardener
             </h1>
-            <p className="mt-2 text-[#8E9299] max-w-xl italic serif">
+            <p className="mt-2 text-[#8E9299] dark:text-[#A1A5AB] max-w-xl italic serif transition-colors">
               Sovereign fingerprint protection for Google AI & LLM environments. 
               Merged Golden Master architecture with zero-blindspot hardening.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 flex-wrap justify-end">
+            {deferredPrompt && (
+              <button
+                onClick={handleInstallPWA}
+                className="group relative flex items-center justify-center gap-2 bg-white dark:bg-[#1c1d21] border border-black/10 dark:border-white/10 text-[#151619] dark:text-white px-6 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-[#252629] transition-all active:scale-95 shadow-sm"
+              >
+                <AppWindow className="w-4 h-4 text-blue-500" />
+                <span className="text-sm font-medium">Install App</span>
+              </button>
+            )}
+            <button
+              onClick={handleGenerateLogo}
+              disabled={isGeneratingLogo}
+              className="group relative flex items-center justify-center gap-2 bg-white dark:bg-[#1c1d21] border border-black/10 dark:border-white/10 text-[#151619] dark:text-white px-6 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-[#252629] transition-all active:scale-95 shadow-sm disabled:opacity-50"
+            >
+              {isGeneratingLogo ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
+              <span className="text-sm font-medium">Generate Logo</span>
+            </button>
             <button
               onClick={() => setShowGithubModal(true)}
-              className="group relative flex items-center gap-2 bg-white border border-black/10 text-[#151619] px-6 py-3 rounded-xl hover:bg-gray-50 transition-all active:scale-95 shadow-sm"
+              className="group relative flex items-center justify-center gap-2 bg-white dark:bg-[#1c1d21] border border-black/10 dark:border-white/10 text-[#151619] dark:text-white px-6 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-[#252629] transition-all active:scale-95 shadow-sm"
             >
               <Github className="w-4 h-4" />
-              <span className="text-sm font-medium">Push to GitHub</span>
+              <span className="text-sm font-medium">Push</span>
             </button>
             <button
               onClick={handleCopy}
-              className="group relative flex items-center gap-2 bg-[#151619] text-white px-6 py-3 rounded-xl hover:bg-[#252629] transition-all active:scale-95 shadow-lg shadow-black/10"
+              className="group relative flex items-center justify-center gap-2 bg-[#151619] dark:bg-white text-white dark:text-[#151619] px-6 py-3 rounded-xl hover:bg-[#252629] dark:hover:bg-gray-200 transition-all active:scale-95 shadow-lg shadow-black/10 dark:shadow-white/10"
             >
             {copied ? (
               <>
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm font-medium">Copied to Clipboard</span>
+                <Check className="w-4 h-4 text-emerald-400 dark:text-emerald-600" />
+                <span className="text-sm font-medium">Copied</span>
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                <span className="text-sm font-medium">Copy Script</span>
+                <span className="text-sm font-medium">Copy</span>
               </>
             )}
-          </button>
+            </button>
+            <button
+              onClick={handleInstallScript}
+              className="group relative flex items-center justify-center gap-2 bg-[#FF4444] text-white px-6 py-3 rounded-xl hover:bg-[#E63E3E] transition-all active:scale-95 shadow-lg shadow-red-500/20"
+            >
+              <Download className="w-4 h-4" />
+              <span className="text-sm font-medium">Install</span>
+            </button>
           </div>
         </header>
 
@@ -390,7 +510,7 @@ export default function App() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Feature List */}
           <div className="md:col-span-1 space-y-4">
-            <div className="bg-[#151619] rounded-2xl p-6 text-white shadow-xl">
+            <div className="bg-[#151619] dark:bg-[#111111] rounded-2xl p-6 text-white shadow-xl border border-transparent dark:border-white/10 transition-colors">
               <h2 className="text-xs font-mono tracking-widest uppercase text-[#8E9299] mb-4">
                 Active Modules
               </h2>
@@ -403,9 +523,9 @@ export default function App() {
               </ul>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 border border-black/5 shadow-sm">
-              <h3 className="text-sm font-bold mb-2">How to use</h3>
-              <ol className="text-xs text-[#8E9299] space-y-2 list-decimal list-inside">
+            <div className="bg-white dark:bg-[#1c1d21] rounded-2xl p-6 border border-black/5 dark:border-white/10 shadow-sm transition-colors">
+              <h3 className="text-sm font-bold mb-2 dark:text-white">How to use</h3>
+              <ol className="text-xs text-[#8E9299] dark:text-[#A1A5AB] space-y-2 list-decimal list-inside">
                 <li>Install Tampermonkey or Violentmonkey</li>
                 <li>Create a new script</li>
                 <li>Paste the Golden Master code</li>
@@ -415,15 +535,27 @@ export default function App() {
           </div>
 
           {/* Code Preview */}
-          <div className="md:col-span-2">
-            <div className="bg-[#151619] rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[600px]">
+          <div className={`md:col-span-2 ${isReaderMode ? 'fixed inset-4 md:inset-8 z-50' : ''}`}>
+            {isReaderMode && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm -z-10" onClick={() => setIsReaderMode(false)} />
+            )}
+            <div className={`bg-[#151619] dark:bg-[#111111] rounded-2xl overflow-hidden shadow-2xl flex flex-col transition-all duration-300 border border-transparent dark:border-white/10 ${isReaderMode ? 'h-full' : 'h-[600px]'}`}>
               <div className="px-4 py-3 bg-[#1c1d21] border-b border-white/5 flex items-center justify-between">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
                   <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
                   <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
                 </div>
-                <span className="text-[10px] font-mono text-[#8E9299]">golden_master_sovereign.js</span>
+                <div className="flex items-center gap-4">
+                  <span className="text-[10px] font-mono text-[#8E9299]">golden_master_sovereign.js</span>
+                  <button 
+                    onClick={() => setIsReaderMode(!isReaderMode)}
+                    className="text-[#8E9299] hover:text-white transition-colors"
+                    title={isReaderMode ? "Exit Reader Mode" : "Enter Reader Mode"}
+                  >
+                    {isReaderMode ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
               <div className="flex-1 flex flex-col">
                 <textarea
@@ -439,7 +571,7 @@ export default function App() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-12 pt-8 border-t border-black/5 flex justify-between items-center text-[10px] font-mono text-[#8E9299] uppercase tracking-widest">
+        <footer className="mt-12 pt-8 border-t border-black/5 dark:border-white/5 flex justify-between items-center text-[10px] font-mono text-[#8E9299] uppercase tracking-widest transition-colors">
           <div>System Status: Operational</div>
           <div>Encryption: AES-256-GCM Equivalent</div>
         </footer>
@@ -476,21 +608,21 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl overflow-hidden"
+                className="relative w-full max-w-md bg-white dark:bg-[#1c1d21] rounded-3xl p-8 shadow-2xl overflow-hidden border border-transparent dark:border-white/10"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-2xl bg-black flex items-center justify-center text-white">
+                  <div className="w-10 h-10 rounded-2xl bg-black dark:bg-white flex items-center justify-center text-white dark:text-black">
                     <Github className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">Push to RE3CON/Gemini-AI</h2>
-                    <p className="text-xs text-[#8E9299]">Deploy current codebase to GitHub</p>
+                    <h2 className="text-xl font-bold dark:text-white">Push to RE3CON/Gemini-AI</h2>
+                    <p className="text-xs text-[#8E9299] dark:text-[#A1A5AB]">Deploy current codebase to GitHub</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-mono uppercase tracking-widest text-[#8E9299] mb-1.5">
+                    <label className="block text-[10px] font-mono uppercase tracking-widest text-[#8E9299] dark:text-[#A1A5AB] mb-1.5">
                       GitHub Personal Access Token
                     </label>
                     <input
@@ -498,10 +630,10 @@ export default function App() {
                       value={githubToken}
                       onChange={(e) => setGithubToken(e.target.value)}
                       placeholder="ghp_xxxxxxxxxxxx"
-                      className="w-full bg-gray-50 border border-black/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
+                      className="w-full bg-gray-50 dark:bg-[#111111] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-[#141414] dark:text-white focus:outline-none focus:ring-2 focus:ring-black/5 dark:focus:ring-white/10 transition-all"
                     />
-                    <p className="mt-2 text-[10px] text-[#8E9299] leading-relaxed">
-                      Requires <code className="bg-gray-100 px-1 rounded">repo</code> scope. Your token is only used for this session and never stored.
+                    <p className="mt-2 text-[10px] text-[#8E9299] dark:text-[#A1A5AB] leading-relaxed">
+                      Requires <code className="bg-gray-100 dark:bg-[#111111] px-1 rounded">repo</code> scope. Your token is only used for this session and never stored.
                     </p>
                   </div>
 
@@ -510,7 +642,9 @@ export default function App() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className={`p-4 rounded-xl text-xs ${
-                        pushStatus.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                        pushStatus.type === 'success' 
+                          ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' 
+                          : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400'
                       }`}
                     >
                       {pushStatus.message}
@@ -521,14 +655,14 @@ export default function App() {
                     <button
                       disabled={isPushing}
                       onClick={() => setShowGithubModal(false)}
-                      className="flex-1 px-6 py-3 rounded-xl text-sm font-medium border border-black/5 hover:bg-gray-50 transition-all disabled:opacity-50"
+                      className="flex-1 px-6 py-3 rounded-xl text-sm font-medium border border-black/5 dark:border-white/10 dark:text-white hover:bg-gray-50 dark:hover:bg-[#252629] transition-all disabled:opacity-50"
                     >
                       Cancel
                     </button>
                     <button
                       disabled={isPushing || !githubToken}
                       onClick={handleGithubPush}
-                      className="flex-1 bg-[#151619] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#252629] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-1 bg-[#151619] dark:bg-white text-white dark:text-[#151619] px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#252629] dark:hover:bg-gray-200 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                       {isPushing ? (
                         <>
