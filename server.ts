@@ -4,7 +4,6 @@ import { Octokit } from "octokit";
 import fs from "fs/promises";
 import path from "path";
 import dotenv from "dotenv";
-import { GoogleGenAI } from "@google/genai";
 import { rateLimit } from "express-rate-limit";
 
 dotenv.config();
