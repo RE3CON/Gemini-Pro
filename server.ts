@@ -237,7 +237,13 @@ async function startServer() {
   } else {
     // Serve static files in production
     app.use(express.static("dist"));
-    app.get("*", (req, res) => {
+
+    const htmlRateLimiter = rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // limit each IP to 100 requests per windowMs for HTML shell
+    });
+
+    app.get("*", htmlRateLimiter, (req, res) => {
       res.sendFile(path.resolve("dist/index.html"));
     });
   }
