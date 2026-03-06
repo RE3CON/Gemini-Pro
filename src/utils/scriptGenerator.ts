@@ -171,9 +171,9 @@ export const generateUserScript = (config: ScriptConfig): string => {
 
   const connectorString = connectors.length > 0 ? connectors.join('_') : 'basic_connectors';
 
-  // LOGIC: Gemini 3.0 Priority (2026 Epoch)
-  // If both 2.0 and 3.0 are enabled, force the platform to default to 3.0 while keeping 2.0 available in switcher.
-  const preferV3 = (config.enableGemini3_0Flash || config.enableGemini3_0Pro);
+  // LOGIC: Gemini 3.1 Priority (2026 Epoch)
+  // If both 3.0 and 3.1 are enabled, force the platform to default to 3.1 while keeping others available in switcher.
+  const preferV3 = (config.enableGemini3_1Flash || config.enableGemini3_1Pro || config.enableGemini3_1FlashLite);
 
   // --- Dynamic Flags (Merged v15 + v16 + v17 + v18 + v20 + v21 + v23 + v24) ---
   const flags: Record<string, string> = {
@@ -182,16 +182,17 @@ export const generateUserScript = (config: ScriptConfig): string => {
     'gemini_enable_pixel_exclusive_features': config.spoofPixel11ProXL ? 'true' : 'false',
     'gemini_enable_tensor_g6_optimizations': config.enableTensorG6 ? 'true' : 'false',
     
-    // --- Gemini 3.0 (2026 PREVIEW) ---
+    // --- Gemini 3.1 (2026 PREVIEW) ---
+    'gemini_enable_flash_3_1_preview': config.enableGemini3_1Flash ? 'true' : 'false',
+    'gemini_enable_pro_3_1_preview': config.enableGemini3_1Pro ? 'true' : 'false',
+    'gemini_enable_flash_lite_3_1_preview': config.enableGemini3_1FlashLite ? 'true' : 'false',
+    'gemini_default_model_family': preferV3 ? 'gemini_3_1' : 'gemini_3',
+    'gemini_model_switcher_v3_1': preferV3 ? 'true' : 'false',
+    
+    // --- Gemini 3.0 (LEGACY / FALLBACK) ---
     'gemini_enable_flash_3_0_preview': config.enableGemini3_0Flash ? 'true' : 'false',
     'gemini_enable_pro_3_0_preview': config.enableGemini3_0Pro ? 'true' : 'false',
-    'gemini_default_model_family': preferV3 ? 'gemini_3' : 'gemini_2',
-    'gemini_model_switcher_v3': preferV3 ? 'true' : 'false',
-    
-    // --- Gemini 2.0 (LEGACY / FALLBACK) ---
-    'gemini_enable_flash_2_0_preview': config.enableGemini2_0Flash ? 'true' : 'false',
-    'gemini_enable_pro_2_0_preview': config.enableGemini2_0Pro ? 'true' : 'false',
-    'gemini_enable_model_switcher_v2': (config.enableGemini2_0Flash || config.enableGemini2_0Pro) ? 'true' : 'false',
+    'gemini_enable_model_switcher_v3': (config.enableGemini3_0Flash || config.enableGemini3_0Pro) ? 'true' : 'false',
     
     // --- Next-Gen Multimodal (2026) ---
     'gemini_enable_multimodal_streaming_v3': preferV3 ? 'true' : 'false',
@@ -396,7 +397,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     // --- 9. STEALTH DIAGNOSTICS & SELF-HEALING ---
     console.group("🚀 ILLUSION-STEALTH DIAGNOSTICS");
     console.log("SPOOF TARGET:", "${config.spoofPixel11ProXL ? '📱 Pixel 11 Pro XL (Android 17)' : 'Off'}");
-    console.log("Gemini 3.0:", "${preferV3 ? '✅ Active (2026 Preview)' : 'Legacy'}");
+    console.log("Gemini 3.1:", "${preferV3 ? '✅ Active (2026 Preview)' : 'Legacy'}");
     console.log("Samsung:", "${config.enableSamsungEcosystem ? '🟦 Native Bridge Injected' : 'Standard'}");
     ${(config.enableBillingGradeBypass || config.enableBucketOverride) ? `console.warn("⚠️ BILLING OVERRIDE ACTIVE. SERVER CHECKS MAY FLAG ACCOUNT.");` : ''}
     
@@ -474,7 +475,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
   const UA_PIXEL_11_PRO = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36";
 
   return `// ==UserScript==
-// @name         Google AI Identity - Sovereign Ultimate Black-Wall (v76.0)
+// @name         Google AI Identity - Sovereign Ultimate Black-Wall (v78.0)
 // @namespace    https://github.com/RE3CON
 // @version      ${config.version}
 // @description  FINAL MERGE: Canvas-Hard-Spoof, Native Masking, Intl-Proxy, Audio Jitter & Zero-Leak Specs.

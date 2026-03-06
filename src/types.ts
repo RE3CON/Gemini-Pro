@@ -31,10 +31,11 @@ export interface ScriptConfig {
   enableCanvasPro: boolean;
   enableUnlimitedBudget: boolean;
   enableExperimentalModels: boolean;
-  enableGemini3_0Flash: boolean; // NEW: Flash 3.0 (2026)
-  enableGemini3_0Pro: boolean;   // NEW: Pro 3.0 (2026)
-  enableGemini2_0Flash: boolean; // Legacy: Flash 2.0
-  enableGemini2_0Pro: boolean;   // Legacy: Pro 2.0
+  enableGemini3_1Flash: boolean; // NEW: Flash 3.1 (2026)
+  enableGemini3_1Pro: boolean;   // NEW: Pro 3.1 (2026)
+  enableGemini3_1FlashLite: boolean; // NEW: Flash Lite 3.1
+  enableGemini3_0Flash: boolean; // Legacy: Flash 3.0
+  enableGemini3_0Pro: boolean;   // Legacy: Pro 3.0
   
   // Media & Labs
   enableHighFidelityMedia: boolean; // 4K/8K Nano Banana

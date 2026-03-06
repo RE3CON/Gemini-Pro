@@ -21,7 +21,7 @@ import { ScriptConfig } from './types';
 
 // --- INITIAL CONFIGURATION (FULL RESTORATION) ---
 const INITIAL_CONFIG: ScriptConfig = {
-  version: '27.9.23-FULL-RESTORE',
+  version: '28.3.6-ULTIMATE',
   
   // --- RECOMMENDED DEFAULTS ---
   spoofPixel11ProXL: true,
@@ -39,8 +39,11 @@ const INITIAL_CONFIG: ScriptConfig = {
   enableGoogleDrive: true,
   enableYouTube: true,
 
-  enableGemini3_0Pro: true,
-  enableGemini3_0Flash: true,
+  enableGemini3_1Pro: true,
+  enableGemini3_1Flash: true,
+  enableGemini3_1FlashLite: true,
+  enableGemini3_0Flash: false,
+  enableGemini3_0Pro: false,
   enableDeepThink: true,
   enableHighFidelityMedia: true,
   
@@ -59,8 +62,6 @@ const INITIAL_CONFIG: ScriptConfig = {
   enableCanvasPro: false,
   enableUnlimitedBudget: false,
   enableExperimentalModels: false,
-  enableGemini2_0Flash: false,
-  enableGemini2_0Pro: false,
   enableProjectAstra: false,
   
   enableKleinanzeigen: false,
@@ -295,14 +296,15 @@ const SECTION_DEFINITIONS = [
   },
   {
     id: 'gemini3',
-    title: 'Gemini 3.0 (2026) & Models',
+    title: 'Gemini 3.1 (2026) & Models',
     icon: Sparkles,
     color: 'text-indigo-400',
     items: [
-      { key: 'enableGemini3_0Flash', label: 'Enable Gemini 3.0 Flash Preview' },
-      { key: 'enableGemini3_0Pro', label: 'Enable Gemini 3.0 Pro Preview' },
-      { key: 'enableGemini2_0Flash', label: 'Enable Gemini 2.0 Flash (Legacy)' },
-      { key: 'enableGemini2_0Pro', label: 'Enable Gemini 2.0 Pro (Legacy)' },
+      { key: 'enableGemini3_1Flash', label: 'Enable Gemini 3.1 Flash Preview' },
+      { key: 'enableGemini3_1Pro', label: 'Enable Gemini 3.1 Pro Preview' },
+      { key: 'enableGemini3_1FlashLite', label: 'Enable Gemini 3.1 Flash Lite' },
+      { key: 'enableGemini3_0Flash', label: 'Enable Gemini 3.0 Flash (Legacy)' },
+      { key: 'enableGemini3_0Pro', label: 'Enable Gemini 3.0 Pro (Legacy)' },
       { key: 'enableDeepThink', label: 'DeepThink v3 (Reasoning)' },
       { key: 'enableMariner', label: 'Mariner (Navigation)' },
       { key: 'enableProjectAstra', label: 'Project Astra (Realtime Multimodal)' },
@@ -745,8 +747,9 @@ export default function App() {
           ...INITIAL_CONFIG, 
           enableOmniMaximus: true, 
           enableUnlimitedBudget: true,
-          enableGemini3_0Pro: true, 
-          enableGemini3_0Flash: true,
+          enableGemini3_1Pro: true, 
+          enableGemini3_1Flash: true,
+          enableGemini3_1FlashLite: true,
           enableLudicrousSpeed: true,
           enableHyperVelocity: true,
           enableExtremeThinking: true
@@ -756,7 +759,8 @@ export default function App() {
         setConfig(prev => ({
           ...INITIAL_CONFIG,
           spoofPixel11ProXL: true,
-          enableGemini3_0Pro: true, 
+          enableGemini3_1Pro: true, 
+          enableGemini3_1Flash: true,
           enableSamsungEcosystem: true,
           enableSamsungNotes: true,
           enableSamsungGallery: true,
