@@ -1,5 +1,15 @@
 # Gemini Adaptive Suite: Sovereign Productivity Bridge
 
+<div align="center">
+  <a href="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js">
+    <img src="https://img.shields.io/badge/Download-UserScript-success?style=for-the-badge&logo=tampermonkey" alt="Download UserScript" />
+  </a>
+  <a href="https://github.com/RE3CON/Gemini-Pro/releases/latest">
+    <img src="https://img.shields.io/github/v/release/RE3CON/Gemini-Pro?style=for-the-badge" alt="Latest Release" />
+  </a>
+</div>
+<br/>
+
 ![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Android Build](https://img.shields.io/badge/platform-Android-green.svg)
 ![UserScript](https://img.shields.io/badge/type-UserScript-orange.svg)
