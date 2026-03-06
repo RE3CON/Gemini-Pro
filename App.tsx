@@ -1081,15 +1081,24 @@ const App: React.FC = () => {
             <CodeBlock code={generatedScript} />
           </div>
 
-          <div className="flex flex-col items-center justify-center my-4">
-             <a 
-               href={downloadUrl}
-               download="gemini-adaptive.user.js"
-               className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-500 text-black text-sm font-bold rounded-xl transition-all shadow-lg shadow-gold-900/20 hover:shadow-gold-900/40 hover:scale-[1.02]"
-             >
-               <Play size={18} fill="currentColor" />
-               <span>Download UserScript (.user.js)</span>
-             </a>
+          <div className="flex flex-col items-center justify-center my-4 gap-3">
+             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+               <a 
+                 href="https://github.com/RE3CON/Gemini-Pro/raw/main/dist/gemini-adaptive.user.js"
+                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:scale-[1.02]"
+               >
+                 <Play size={18} fill="currentColor" />
+                 <span>Install Default Script</span>
+               </a>
+               <a 
+                 href={downloadUrl}
+                 download="gemini-adaptive.user.js"
+                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-500 text-black text-sm font-bold rounded-xl transition-all shadow-lg shadow-gold-900/20 hover:shadow-gold-900/40 hover:scale-[1.02]"
+               >
+                 <FileText size={18} fill="currentColor" />
+                 <span>Download Custom Script</span>
+               </a>
+             </div>
              <p className="mt-3 text-[10px] text-slate-500 text-center max-w-md">
                <strong>Note:</strong> This is a coding test built with the genius Gemini Coding Assistant! Many advanced features shown here are UI placebos. True UA spoofing and complete control of Chrome on Android actually require <strong>ADB commands</strong> (which mostly make temporary changes in RAM). Most importantly, on Android without root, the <code>Local State</code> file is the real control center for Chrome-based browsers (especially since Developer Tools are not available in the mobile browser). You must modify this file alongside utilizing internal <code>chrome://</code> URLs, flags, and debug menus. <br/><br/>
                <em>Stay tuned: This project will soon pivot to share real AI tips, tricks, and special offers!</em>

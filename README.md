@@ -3,8 +3,8 @@
 <div align="center">
   <h3>🌐 <a href="https://re3con.github.io/Gemini-Pro/">Official Website & Community Forum</a> 🌐</h3>
   <br/>
-  <a href="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js">
-    <img src="https://img.shields.io/badge/Download-UserScript-success?style=for-the-badge&logo=tampermonkey" alt="Download UserScript" />
+  <a href="https://github.com/RE3CON/Gemini-Pro/raw/main/dist/gemini-adaptive.user.js">
+    <img src="https://img.shields.io/badge/Install-UserScript-success?style=for-the-badge&logo=tampermonkey" alt="Install UserScript" />
   </a>
   <a href="https://github.com/RE3CON/Gemini-Pro/releases/latest">
     <img src="https://img.shields.io/github/v/release/RE3CON/Gemini-Pro?style=for-the-badge" alt="Latest Release" />
