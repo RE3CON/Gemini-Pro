@@ -640,7 +640,6 @@ export default function App() {
   const [remoteVersion, setRemoteVersion] = useState<string | null>(null);
   const [isCheckingVersion, setIsCheckingVersion] = useState(false);
   const [activeTab, setActiveTab] = useState<'configurator' | 'readme' | 'troubleshooting' | 'license' | 'forum' | 'security'>('configurator');
-  const [isReaderMode, setIsReaderMode] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showGithubModal, setShowGithubModal] = useState(false);
   const [githubToken, setGithubToken] = useState('');
