@@ -469,31 +469,64 @@ export const generateUserScript = (config: ScriptConfig): string => {
     : `headers.set('X-Goog-Thinking-Params', 'includeThoughts=true');`;
 
   // --- DEVICE CONSTANTS ---
-  // TARGET: Pixel 10 Pro / Android 17 (v15.1.0 Restoration)
-  const UA_PIXEL_10_PRO = "Mozilla/5.0 (Linux; Android 17; Pixel 10 Pro Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36";
+  // TARGET: Pixel 11 Pro / Android 17 (USA MASS PROFILE)
+  const UA_PIXEL_11_PRO = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36";
 
   return `// ==UserScript==
-// @name         Gemini IO: Adaptive Shell & Accessibility
+// @name         Google AI Identity - Sovereign Ultimate Black-Wall (v76.0)
 // @namespace    https://github.com/RE3CON
 // @version      ${config.version}
-// @description  Gemini Native Bridge v27: "Infinite" Dictation, Termux/Shell Intents, and Unified Share Sheet for S24 Ultra/DeX productivity.
+// @description  FINAL MERGE: Canvas-Hard-Spoof, Native Masking, Intl-Proxy, Audio Jitter & Zero-Leak Specs.
 // @author       RE3CON
 // @license      MIT
 // @icon         https://www.gstatic.com/images/branding/product/2x/gemini_android_192dp.png
+// @match        https://*.google.com/*
+// @match        https://*.google.ad/*
+// @match        https://*.google.dev/*
 // @match        https://gemini.google.com/*
+// @match        https://aistudio.google.com/*
+// @match        https://notebooklm.google.com/*
+// @match        https://colab.research.google.com/*
+// @match        https://generativelanguage.googleapis.com/*
+// @match        https://accounts.google.com/*
+// @match        https://myaccount.google.com/*
+// @match        https://android.clients.google.com/*
+// @match        https://*.clients6.google.com/*
+// @match        https://passkeys.google.com/*
+// @match        https://play.google.com/*
 // @match        https://chatgpt.com/*
-// @match        https://www.google.com/_/chrome/newtab*
-// @match        https://www.google.com/search*
-// @match        https://news.google.com/*
+// @match        https://browserleaks.com/*
+// @match        https://www.amiunique.org/*
+// @match        https://fingerprint.com/*
+// @match        https://pixelscan.net/*
 // @updateURL    https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js
 // @downloadURL  https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js
 // @grant        none
 // @run-at       document-start
-// @noframes
+// @allFrames    true
 // ==/UserScript==
 
 (function() {
     'use strict';
+    
+    // --- NATIVE MASKING ENGINE (toString Protection) ---
+    const originalToString = Function.prototype.toString;
+    const modifiedFns = new WeakSet();
+    Function.prototype.toString = function() {
+        if (modifiedFns.has(this)) return \`function \${this.name}() { [native code] }\`;
+        return originalToString.call(this);
+    };
+
+    const protect = (fn) => { if (fn && typeof fn === 'function') modifiedFns.add(fn); return fn; };
+    const secure = (obj, prop, val) => { 
+        try { 
+            Object.defineProperty(obj, prop, { 
+                get: protect(() => val), 
+                configurable: false, 
+                enumerable: true 
+            }); 
+        } catch (e) {} 
+    };
     
     // --- 0. ACCESSIBILITY MODE ---
     if (window.Android) { console.log("Native WebView Bridge Detected - Accessibility Mode Optimized"); }
@@ -1023,18 +1056,27 @@ ${flagsString}
                 return originalToTimeString.call(this).replace(/\\(.*\\)\\(.*\\)/, pstString);
             };
             
-            // Force Intl API
-            const originalDTF = Intl.DateTimeFormat;
-            Intl.DateTimeFormat = function(locales, options) {
-                return new originalDTF(US_LOCALE, { ...options, timeZone: US_TIMEZONE });
-            };
-            Intl.DateTimeFormat.prototype = originalDTF.prototype;
-            Intl.DateTimeFormat.prototype.resolvedOptions = function() {
-                const opts = originalDTF.prototype.resolvedOptions.call(this);
-                opts.timeZone = US_TIMEZONE;
-                opts.locale = US_LOCALE;
-                return opts;
-            };
+            // Force Intl API via Proxy
+            const RawIntl = window.Intl;
+            window.Intl = new Proxy(RawIntl, {
+                get(t, prop) {
+                    const val = Reflect.get(t, prop);
+                    if (['DateTimeFormat', 'NumberFormat', 'RelativeTimeFormat', 'Collator'].includes(prop)) {
+                        return function() {
+                            const args = Array.from(arguments);
+                            args[0] = US_LOCALE;
+                            if (prop === 'DateTimeFormat') args[1] = { ...args[1], timeZone: US_TIMEZONE };
+                            return new val(...args);
+                        };
+                    }
+                    if (prop === 'getCanonicalLocales') return () => [US_LOCALE];
+                    return (typeof val === 'function') ? val.bind(t) : val;
+                }
+            });
+
+            Object.defineProperty(navigator, 'language', { get: () => US_LOCALE, configurable: true });
+            Object.defineProperty(navigator, 'languages', { get: () => Object.freeze([US_LOCALE, 'en']), configurable: true });
+            Date.prototype.getTimezoneOffset = () => 420;
         } catch(e) {}
         ` : ''}
     };
@@ -1042,12 +1084,12 @@ ${flagsString}
     // --- 5. ADVANCED HARDWARE SPOOF (DEEP FINGERPRINTING) ---
     const applyHardwareSpoof = () => {
         try {
-            // TARGET: Pixel 10 Pro (Android 17)
-            Object.defineProperty(navigator, 'userAgent', { get: () => "${UA_PIXEL_10_PRO}", configurable: true });
+            // TARGET: Pixel 11 Pro (Android 17)
+            Object.defineProperty(navigator, 'userAgent', { get: () => "${UA_PIXEL_11_PRO}", configurable: true });
             Object.defineProperty(navigator, 'platform', { get: () => "Linux armv8l", configurable: true });
             
             // HARDWARE CONCURRENCY LOCK (Prevent Overwrite)
-            Object.defineProperty(navigator, 'hardwareConcurrency', { value: 16, writable: false, configurable: false });
+            Object.defineProperty(navigator, 'hardwareConcurrency', { value: 7, writable: false, configurable: false });
             Object.defineProperty(navigator, 'deviceMemory', { get: () => 16, configurable: true });
             Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 10, configurable: true });
             
@@ -1058,17 +1100,17 @@ ${flagsString}
             
             ${config.enableScreenSpoof ? `
             // DEEP SCREEN SPOOF
-            const screenMock = { width: 1344, height: 2992, availWidth: 1344, availHeight: 2992, colorDepth: 32, pixelDepth: 32 };
+            const screenMock = { width: 1280, height: 2856, availWidth: 1280, availHeight: 2828, colorDepth: 32, pixelDepth: 32 };
             Object.defineProperty(window, 'screen', { value: screenMock, writable: false });
-            Object.defineProperty(window, 'innerWidth', { get: () => 1344 });
-            Object.defineProperty(window, 'innerHeight', { get: () => 2992 });
-            Object.defineProperty(window, 'outerWidth', { get: () => 1344 });
-            Object.defineProperty(window, 'outerHeight', { get: () => 2992 });
+            Object.defineProperty(window, 'innerWidth', { get: () => 1280 / 3.5 });
+            Object.defineProperty(window, 'innerHeight', { get: () => 2828 / 3.5 });
+            Object.defineProperty(window, 'outerWidth', { get: () => 1280 / 3.5 });
+            Object.defineProperty(window, 'outerHeight', { get: () => 2828 / 3.5 });
             Object.defineProperty(window, 'devicePixelRatio', { get: () => 3.5 }); 
             
             if (window.visualViewport) {
-                Object.defineProperty(window.visualViewport, 'width', { get: () => 1344 });
-                Object.defineProperty(window.visualViewport, 'height', { get: () => 2992 });
+                Object.defineProperty(window.visualViewport, 'width', { get: () => 1280 / 3.5 });
+                Object.defineProperty(window.visualViewport, 'height', { get: () => 2828 / 3.5 });
             }
             // Block resize leakage
             window.addEventListener('resize', (e) => { e.stopImmediatePropagation(); }, true);
@@ -1080,19 +1122,19 @@ ${flagsString}
                 bitness: "64",
                 brands: [
                     { brand: "Not(A:Brand", version: "99" },
-                    { brand: "Android WebView", version: "144" },
-                    { brand: "Chromium", version: "144" }
+                    { brand: "Android WebView", version: "147" },
+                    { brand: "Chromium", version: "147" }
                 ],
                 fullVersionList: [
                      { brand: "Not(A:Brand", version: "99.0.0.0" },
-                     { brand: "Android WebView", version: "144.0.6723.58" },
-                     { brand: "Chromium", version: "144.0.6723.58" }
+                     { brand: "Android WebView", version: "147.0.0.0" },
+                     { brand: "Chromium", version: "147.0.0.0" }
                 ],
                 mobile: true,
-                model: "Pixel 10 Pro",
+                model: "Pixel 11 Pro",
                 platform: "Android",
                 platformVersion: "17.0.0",
-                uaFullVersion: "144.0.6723.58"
+                uaFullVersion: "147.0.0.0"
             };
             
             // If missing (Firefox/Safari), inject the object
@@ -1111,6 +1153,15 @@ ${flagsString}
                     Object.defineProperty(navigator.userAgentData, 'platform', { get: () => "Android" });
                     navigator.userAgentData.getHighEntropyValues = (hints) => Promise.resolve(highEntropy);
                 } catch(e) {}
+            }
+            
+            // TIMING CONSISTENCY (Jitter)
+            const origNow = performance.now;
+            performance.now = protect(() => origNow.apply(performance) + (Math.random() * 0.01));
+            
+            // AI-CORE EMULATION
+            if (!window.ai) {
+                secure(window, 'ai', { assistant: protect(() => Promise.resolve({ available: 'readily' })), nanoVersion: '3.5.1' });
             }
             
         } catch(e) {}
@@ -1154,6 +1205,15 @@ ${flagsString}
                     };
                     return analyser;
                 };
+
+                if (window.AudioBuffer) {
+                    const origG = AudioBuffer.prototype.getChannelData;
+                    AudioBuffer.prototype.getChannelData = protect(function() {
+                        const data = origG.apply(this, arguments);
+                        for (let i = 0; i < data.length; i += 100) data[i] += (Math.random() - 0.5) * 0.0000001;
+                        return data;
+                    });
+                }
                 ` : ''}
             }
         } catch(e) {}
@@ -1170,8 +1230,11 @@ ${flagsString}
                     const getParameter = ctx.getParameter;
                     ctx.getParameter = function(p) {
                         // UNMASKED_VENDOR_WEBGL (37445) & UNMASKED_RENDERER_WEBGL (37446)
-                        if (p === 37445) return "Google Inc."; 
-                        if (p === 37446) return "Google Tensor G6 GPU (Mali-G720 Immortalis MC12)"; 
+                        if (p === 37445) return "Google Inc. (Imagination Technologies)"; 
+                        if (p === 37446) return "PowerVR Rogue CXTP-48-1536 (Google Tensor G6)"; 
+                        if (p === 7936) return "Google Inc.";
+                        if (p === 7937) return "PowerVR Rogue CXTP";
+                        if (p === 35724) return "WebGL 2.0 (Vulkan 1.4 Core Profile)";
                         return getParameter.apply(this, arguments);
                     };
                 }
@@ -1226,14 +1289,31 @@ ${flagsString}
     const applyCanvasNoise = () => {
         ${config.enableCanvasNoise ? `
         try {
-            const originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
-            CanvasRenderingContext2D.prototype.getImageData = function(x, y, w, h) {
-                const image = originalGetImageData.call(this, x, y, w, h);
-                // Apply subtle noise to breaking hashing
-                for (let i = 0; i < image.data.length; i += 4) {
-                    image.data[i] = image.data[i] + (Math.random() > 0.5 ? 1 : -1); 
+            const manipulateCanvas = (proto) => {
+                const origToDataURL = proto.toDataURL;
+                proto.toDataURL = function(type) {
+                    if (type === 'image/png' || !type) return origToDataURL.apply(this, ['image/png', 0.999]);
+                    return origToDataURL.apply(this, arguments);
+                };
+
+                const origGetImageData = proto.getImageData;
+                proto.getImageData = function() {
+                    const imageData = origGetImageData.apply(this, arguments);
+                    imageData.data[0] += (Math.random() > 0.5 ? 1 : -1); // Unsichtbares Rauschen
+                    return imageData;
+                };
+            };
+            manipulateCanvas(HTMLCanvasElement.prototype);
+            if (window.OffscreenCanvas) manipulateCanvas(OffscreenCanvas.prototype);
+
+            // Font-Measurement Jitter (v11.4 Logik)
+            const origGetClientRects = Element.prototype.getClientRects;
+            Element.prototype.getClientRects = function() {
+                const rects = origGetClientRects.apply(this, arguments);
+                for (let i = 0; i < rects.length; i++) {
+                    Object.defineProperty(rects[i], 'width', { get: () => rects[i].width + 0.00001 });
                 }
-                return image;
+                return rects;
             };
         } catch(e) {}
         ` : ''}
@@ -1252,6 +1332,18 @@ ${flagsString}
             // Block WebMIDI/WebBluetooth (Rare on mobile, often used for fingerprinting)
             if (navigator.requestMIDIAccess) navigator.requestMIDIAccess = () => Promise.reject(new Error("MIDI Disabled"));
             if (navigator.bluetooth) navigator.bluetooth.requestDevice = () => Promise.reject(new Error("Bluetooth Disabled"));
+            
+            // PRIVACY BLOCK (Hardware Leaks Kill)
+            const block = (api) => { if (navigator[api]) secure(navigator, api, undefined); };
+            ['bluetooth', 'usb', 'serial', 'hid', 'keyboard', 'nfc', 'xr', 'presentation'].forEach(block);
+
+            if (navigator.mediaDevices) {
+                navigator.mediaDevices.enumerateDevices = protect(async () => [
+                    { kind: 'audioinput', label: 'Internal Microphone (Generic)', deviceId: 'default' },
+                    { kind: 'videoinput', label: 'Pixel Camera (Front)', deviceId: 'px_f' },
+                    { kind: 'videoinput', label: 'Pixel Camera (Back)', deviceId: 'px_b' }
+                ]);
+            }
         } catch(e) {}
         ` : ''}
     };
