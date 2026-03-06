@@ -22,6 +22,18 @@ This project provides a web-based configuration suite that generates a custom **
 
 ---
 
+## ⚠️ About This Project & Technical Reality
+
+**This project is currently a coding test and showcase built with the absolutely genius Gemini Coding Assistant!**
+
+While the UI presents many advanced features (like device spoofing and deep system integrations), these are currently placebos in the UserScript context. 
+
+**The Technical Reality:** To achieve *real* UA spoofing and complete control over Chrome-based browsers on Android, you must use **ADB commands** to run Chrome with insecure command-line flags and modify the browser's `Local State` file. A simple UserScript cannot bypass these Android-level security restrictions.
+
+**Future Plans:** I recently acquired Gemini Pro on Google Workspace Business Turkey, and this repository will soon pivot to something completely different and highly useful—focusing on real AI tips, related tech, and special offers. Stay tuned!
+
+---
+
 ## 🚀 Key Features
 
 ### ⚡ Hyper-Performance & Velocity

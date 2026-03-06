@@ -1090,8 +1090,9 @@ const App: React.FC = () => {
                <Play size={18} fill="currentColor" />
                <span>Download UserScript (.user.js)</span>
              </a>
-             <p className="mt-3 text-[10px] text-slate-500 text-center max-w-sm">
-               Note: Many features (like ADB commands, deeply integrated intents, and "Gemini Fantasy" functions) are placeholders/placebos in this UserScript demo. Proper porting to a native Android app via ADB is required for full functionality.
+             <p className="mt-3 text-[10px] text-slate-500 text-center max-w-md">
+               <strong>Note:</strong> This is a coding test built with the genius Gemini Coding Assistant! Many advanced features shown here are UI placebos. True UA spoofing and complete control of Chrome on Android actually require <strong>ADB commands</strong> to run Chrome with insecure command-line flags and modify the <code>Local State</code> file. <br/><br/>
+               <em>Stay tuned: This project will soon pivot to share real AI tips, tricks, and special offers!</em>
              </p>
           </div>
 
