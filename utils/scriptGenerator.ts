@@ -474,10 +474,10 @@ export const generateUserScript = (config: ScriptConfig): string => {
 
   return `// ==UserScript==
 // @name         Gemini IO: Adaptive Shell & Accessibility
-// @namespace    https://github.com/Recon-Designs
+// @namespace    https://github.com/RE3CON
 // @version      ${config.version}
 // @description  Gemini Native Bridge v27: "Infinite" Dictation, Termux/Shell Intents, and Unified Share Sheet for S24 Ultra/DeX productivity.
-// @author       Recon
+// @author       RE3CON
 // @license      MIT
 // @icon         https://www.gstatic.com/images/branding/product/2x/gemini_android_192dp.png
 // @match        https://gemini.google.com/*
@@ -485,8 +485,8 @@ export const generateUserScript = (config: ScriptConfig): string => {
 // @match        https://www.google.com/_/chrome/newtab*
 // @match        https://www.google.com/search*
 // @match        https://news.google.com/*
-// @updateURL    https://raw.githubusercontent.com/Recon-Designs/gemini-io/main/dist/gemini-adaptive.user.js
-// @downloadURL  https://raw.githubusercontent.com/Recon-Designs/gemini-io/main/dist/gemini-adaptive.user.js
+// @updateURL    https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js
+// @downloadURL  https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js
 // @grant        none
 // @run-at       document-start
 // @noframes

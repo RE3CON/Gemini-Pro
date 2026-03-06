@@ -55,7 +55,7 @@ This project provides a web-based configuration suite that generates a custom **
 
 ### 1. Web Suite (This Repository)
 The web suite allows you to toggle over 200+ flags to customize your experience.
-1. Open the [Preview Site](https://your-github-username.github.io/your-repo-name/).
+1. Open the [Preview Site](https://RE3CON.github.io/Gemini-Pro/).
 2. Configure your desired features.
 3. Click **Download UserScript** to get your `.user.js` file.
 
