@@ -337,19 +337,6 @@ const SECTION_DEFINITIONS = [
     ]
   },
   {
-    id: 'ai_bridge',
-    title: 'AI Singularity Bridge (Gemini Fantasy)',
-    icon: BrainCircuit,
-    color: 'text-pink-400',
-    items: [
-      { key: 'enableBixbyFusion', label: 'Samsung Bixby Fusion' },
-      { key: 'enableChatGPTBridge', label: 'OpenAI ChatGPT Handoff' },
-      { key: 'enableDeepSeekBridge', label: 'DeepSeek Native' },
-      { key: 'enableCoPilotBridge', label: 'MS CoPilot Native' },
-      { key: 'enableGrokBridge', label: 'Grok (via X)' },
-    ]
-  },
-  {
     id: 'commerce',
     title: 'Commerce Nexus (DE/Global)',
     icon: ShoppingBag,
