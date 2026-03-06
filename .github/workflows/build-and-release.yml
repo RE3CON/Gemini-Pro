@@ -48,13 +48,13 @@ jobs:
           npx tsx extract.js
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: web-app-build
           path: dist/
 
       - name: Upload UserScript Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: userscript
           path: google-ai-identity.user.js
