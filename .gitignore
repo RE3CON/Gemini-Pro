@@ -26,3 +26,15 @@ push.mjs
 *.sw?
 
 .npmrc
+
+.remote_url_backup
+
+check_health.mjs
+
+check_sync.mjs
+
+final_sync.mjs
+
+backup_remote.mjs
+
+fix_secret.mjs
