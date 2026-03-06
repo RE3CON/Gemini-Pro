@@ -338,7 +338,7 @@ const SECTION_DEFINITIONS = [
   },
   {
     id: 'ai_bridge',
-    title: 'AI Singularity Bridge (Nexus)',
+    title: 'AI Singularity Bridge (Gemini Fantasy)',
     icon: BrainCircuit,
     color: 'text-pink-400',
     items: [
@@ -909,6 +909,9 @@ const App: React.FC = () => {
                     <span className="text-[9px] bg-rose-500 text-white px-1.5 py-0.5 rounded-full animate-pulse font-bold">NEW</span>
                   )}
                 </div>
+                <a href="https://re3con.github.io/Gemini-Pro/" target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline mt-1 inline-block">
+                  🌐 Official Website & Community Forum
+                </a>
               </div>
             </div>
             
@@ -1091,7 +1094,7 @@ const App: React.FC = () => {
             <CodeBlock code={generatedScript} />
           </div>
 
-          <div className="flex justify-center my-4">
+          <div className="flex flex-col items-center justify-center my-4">
              <a 
                href={downloadUrl}
                download="gemini-adaptive.user.js"
@@ -1100,6 +1103,9 @@ const App: React.FC = () => {
                <Play size={18} fill="currentColor" />
                <span>Download UserScript (.user.js)</span>
              </a>
+             <p className="mt-3 text-[10px] text-slate-500 text-center max-w-sm">
+               Note: Many features (like ADB commands, deeply integrated intents, and "Gemini Fantasy" functions) are placeholders/placebos in this UserScript demo. Proper porting to a native Android app via ADB is required for full functionality.
+             </p>
           </div>
 
           <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel10Pro ? "Mozilla/5.0 (Linux; Android 17; Pixel 10 Pro Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />

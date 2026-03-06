@@ -1,6 +1,8 @@
 # Gemini Adaptive Suite: Sovereign Productivity Bridge
 
 <div align="center">
+  <h3>🌐 <a href="https://re3con.github.io/Gemini-Pro/">Official Website & Community Forum</a> 🌐</h3>
+  <br/>
   <a href="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js">
     <img src="https://img.shields.io/badge/Download-UserScript-success?style=for-the-badge&logo=tampermonkey" alt="Download UserScript" />
   </a>
