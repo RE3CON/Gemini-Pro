@@ -199,7 +199,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     'gemini_enable_deep_think_v2': (config.enableDeepThink && !preferV3) ? 'true' : 'false',
 
     // --- Samsung Ecosystem (HYBRID INJECTION) ---
-    'gemini_enable_samsung_partnership_features': (config.enableSamsungEcosystem || config.spoofPixel10Pro) ? 'true' : 'false',
+    'gemini_enable_samsung_partnership_features': (config.enableSamsungEcosystem || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_enable_samsung_notes_integration': config.enableSamsungNotes ? 'true' : 'false',
     'gemini_enable_samsung_gallery_integration': config.enableSamsungGallery ? 'true' : 'false',
     'gemini_enable_samsung_calendar_bridge': config.enableSamsungCalendar ? 'true' : 'false',

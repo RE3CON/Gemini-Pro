@@ -98,7 +98,6 @@ export interface ScriptConfig {
   enableGitPod: boolean;
   enableGlitch: boolean;
   enableCloudShell: boolean;
-  enableDockerHub: boolean;
   enableKubernetes: boolean; // GKE
   enableCircleCI: boolean;
   enableTravisCI: boolean;
