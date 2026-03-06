@@ -20,7 +20,7 @@ const INITIAL_CONFIG: ScriptConfig = {
   
   // --- RECOMMENDED DEFAULTS ---
   // Core Identity & Speed
-  spoofPixel10Pro: true,
+  spoofPixel11ProXL: true,
   enableOmniMaximus: true,
   enableLudicrousSpeed: true,
   enableHyperVelocity: true,
@@ -92,6 +92,7 @@ const INITIAL_CONFIG: ScriptConfig = {
   // Enterprise Core
   enableGitHub: false,
   enableGitLab: false,
+  enableDockerHub: false,
   enableJira: false,
   enableSlack: false,
   enableSalesforce: false,
@@ -314,7 +315,7 @@ const SECTION_DEFINITIONS = [
     items: [
       { key: 'enableOmniMaximus', label: 'Enable ILLUSION-MAXIMUS (God Mode Headers)' },
       { key: 'enableSovereignState', label: 'Enable Sovereign State (Region Lock)' },
-      { key: 'spoofPixel10Pro', label: 'Spoof Pixel 10 Pro (Android 17) [Target]' },
+      { key: 'spoofPixel11ProXL', label: 'Spoof Pixel 11 Pro XL (Android 17) [Target]' },
       { key: 'enableCanaryBuild', label: 'Enable Canary/Internal Build (Dogfood)' },
       { key: 'enableHighFidelityMedia', label: 'Nano Banana 3 / 8K Media' },
       { key: 'enableExperimentalModels', label: 'Experimental & Labs Models' },
@@ -443,6 +444,7 @@ const SECTION_DEFINITIONS = [
     items: [
       { key: 'enableGitHub', label: 'GitHub Enterprise' },
       { key: 'enableGitLab', label: 'GitLab Ultimate' },
+      { key: 'enableDockerHub', label: 'Docker Hub' },
       { key: 'enableReplit', label: 'Replit Ecosystem' },
       { key: 'enableProjectIDX', label: 'Project IDX' },
       { key: 'enableGitPod', label: 'GitPod' },
@@ -606,12 +608,12 @@ const GitHubIssues: React.FC = () => {
           GitHub Issues & Discussions
         </h2>
         <a 
-          href="https://github.com/RE3CON/Gemini-Pro/issues/new" 
+          href="https://github.com/RE3CON/Gemini-AI/discussions" 
           target="_blank" 
           rel="noreferrer"
           className="px-4 py-2 bg-gold-500 hover:bg-gold-400 text-slate-900 text-sm font-medium rounded-lg transition-colors"
         >
-          New Issue
+          Open Discussions
         </a>
       </div>
       <div className="divide-y divide-slate-800">
@@ -669,7 +671,7 @@ const App: React.FC = () => {
     setIsCheckingVersion(true);
     try {
       // Attempt to fetch the version from the userscript on GitHub
-      const response = await fetch('https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js');
+      const response = await fetch('https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/dist/gemini-adaptive.user.js');
       if (response.ok) {
         const text = await response.text();
         const versionMatch = text.match(/@version\s+([^\n\r]+)/);
@@ -751,7 +753,7 @@ const App: React.FC = () => {
         setConfig(prev => ({
           ...INITIAL_CONFIG,
           // S24 Ultra Native Mix (2026 Edition - v24.0)
-          spoofPixel10Pro: true,
+          spoofPixel11ProXL: true,
           enableGemini3_0Pro: true, 
           enableSamsungEcosystem: true,
           enableSamsungNotes: true,
@@ -852,7 +854,7 @@ const App: React.FC = () => {
     if (config.enableGemini3_0Pro && config.enableGemini2_0Pro) list.push("ℹ️ PRIORITY: Gemini 3.0 will take precedence over Gemini 2.0 settings.");
 
     // HYBRID
-    if (config.spoofPixel10Pro && config.enableSamsungEcosystem) list.push("📱 HYBRID IDENTITY: Pixel 10 Pro + S24 Ultra Fusion.");
+    if (config.spoofPixel11ProXL && config.enableSamsungEcosystem) list.push("📱 HYBRID IDENTITY: Pixel 11 Pro XL + S24 Ultra Fusion.");
     
     // STEALTH
     if (config.enableCanvasNoise || config.enableAudioNoise) list.push("👻 STEALTH MATRIX: Fingerprinting noise generators active.");
@@ -896,9 +898,17 @@ const App: React.FC = () => {
                     <span className="text-[9px] bg-rose-500 text-white px-1.5 py-0.5 rounded-full animate-pulse font-bold">NEW</span>
                   )}
                 </div>
-                <a href="https://re3con.github.io/Gemini-Pro/" target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline mt-1 inline-block">
-                  🌐 Official Website & Community Forum
-                </a>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+                  <a href="https://re3con.github.io/Gemini-Pro/" target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline inline-block">
+                    🌐 Official Website
+                  </a>
+                  <a href="https://github.com/RE3CON/Gemini-AI/discussions" target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline inline-block">
+                    💬 Community Forum
+                  </a>
+                  <a href="https://github.com/RE3CON/Gemini-Pro/projects?query=is%3Aopen" target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline inline-block">
+                    📁 AI Projects
+                  </a>
+                </div>
               </div>
             </div>
             
@@ -1031,19 +1041,19 @@ const App: React.FC = () => {
           )}
 
           {activeTab === 'readme' && (
-            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/README.md" />
+            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/README.md" />
           )}
 
           {activeTab === 'troubleshooting' && (
-            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/TROUBLESHOOTING.md" />
+            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/TROUBLESHOOTING.md" />
           )}
 
           {activeTab === 'license' && (
-            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/LICENSE" />
+            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/LICENSE" />
           )}
 
           {activeTab === 'security' && (
-            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/SECURITY.md" />
+            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/SECURITY.md" />
           )}
 
           {activeTab === 'forum' && (
@@ -1094,7 +1104,7 @@ const App: React.FC = () => {
           <div className="flex flex-col items-center justify-center my-4 gap-3">
              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                <a 
-                 href="https://github.com/RE3CON/Gemini-Pro/raw/main/dist/gemini-adaptive.user.js"
+                 href="https://github.com/RE3CON/Gemini-Pro/raw/master/dist/gemini-adaptive.user.js"
                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:scale-[1.02]"
                >
                  <Play size={18} fill="currentColor" />
@@ -1115,7 +1125,7 @@ const App: React.FC = () => {
              </p>
           </div>
 
-          <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel10Pro ? "Mozilla/5.0 (Linux; Android 17; Pixel 10 Pro Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />
+          <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel11ProXL ? "Mozilla/5.0 (Linux; Android 17; Pixel 11 Pro XL Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />
         </div>
         )}
 

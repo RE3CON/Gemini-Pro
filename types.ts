@@ -2,7 +2,7 @@
 export interface ScriptConfig {
   version: string;
   // Core Identity
-  spoofPixel10Pro: boolean; // TARGET: Pixel 10 Pro (Android 17)
+  spoofPixel11ProXL: boolean; // TARGET: Pixel 11 Pro XL (Android 17)
   spoofLocation: boolean; // US-SRE Mountain View
   enableSovereignState: boolean; // SINGULARITY: German Killer / Region Lock
   enableOmniMaximus: boolean; // v8.0.0 MAXIMUS: God Mode Headers
@@ -68,6 +68,7 @@ export interface ScriptConfig {
   // Enterprise Bridge (Core)
   enableGitHub: boolean;
   enableGitLab: boolean;
+  enableDockerHub: boolean;
   enableJira: boolean;
   enableSlack: boolean;
   enableSalesforce: boolean;

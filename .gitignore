@@ -24,3 +24,5 @@ push.mjs
 *.njsproj
 *.sln
 *.sw?
+
+.npmrc

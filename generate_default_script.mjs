@@ -6,7 +6,7 @@ const defaultConfig = {
   version: '1.0.0',
   enableLudicrousSpeed: true,
   enableHyperVelocity: true,
-  spoofPixel10Pro: true,
+  spoofPixel11ProXL: true,
   enableOmniMaximus: true,
   enableContinuousVoice: true,
   enableTermuxBridge: true,

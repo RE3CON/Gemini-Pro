@@ -76,12 +76,12 @@ When hardening your identity, it's also important to consider *how* you access G
 ### 🛡️ Stealth & Security
 - **Anti-Fingerprinting**: Injects noise into Canvas and Audio APIs to prevent tracking.
 - **Telemetry Firewall**: Blocks outgoing analytics and usage tracking.
-- **Sovereign State**: Forces regional locks and spoofs high-end hardware (Pixel 10 Pro).
-- **Hardware Spoofing:** Simulates an RTX 3080 / 16-Core / 8GB environment.
-- **Network Stealth:** Spoofs 4G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
+- **Sovereign State**: Forces regional locks and spoofs high-end hardware (Pixel 11 Pro XL).
+- **Hardware Spoofing:** Simulates an Adreno 750 / 8-Core / 16GB environment.
+- **Network Stealth:** Spoofs 5G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
 - **Masking Engine:** Protects spoofed functions from `.toString()` detection.
 - **Jitter Logic:** Injects noise into timing APIs (`performance.now`) and `requestAnimationFrame`.
-- **GNOME Simulation:** Provides realistic screen geometry for Linux desktop environments.
+- **Android Simulation:** Provides realistic screen geometry and touch events for Android mobile environments.
 
 ### 🌐 App Experience
 - **PWA Support:** Install the application directly to your device.
@@ -97,10 +97,11 @@ When hardening your identity, it's also important to consider *how* you access G
 | :--- | :--- | :--- |
 | **Performance** | `enableLudicrousSpeed` | Bypasses standard API rate limits using internal priority headers. |
 | | `enableHyperVelocity` | Removes DOM bloat and CSS transitions for raw speed. |
-| **Identity** | `spoofPixel10Pro` | Spoofs the device as a Pixel 10 Pro (Android 17) to unlock exclusive features. |
+| **Identity** | `spoofPixel11ProXL` | Spoofs the device as a Pixel 11 Pro XL (Android 17) to unlock exclusive features. |
 | | `enableOmniMaximus` | Injects "God Mode" headers for unrestricted model access. |
 | **Input** | `enableContinuousVoice` | Overrides WebSpeech API timeouts for infinite dictation. |
 | | `enableTermuxBridge` | Creates a bridge to execute local shell commands via Termux. |
+| **Developer** | `enableDockerHub` | Injects Docker Hub read/write headers for container orchestration and build cloud integration. |
 | **Commerce** | `enableKleinanzeigen` | Native intent hooks for the German Kleinanzeigen marketplace. |
 | | `enableIdealo` | Real-time price comparison bridge for EU markets. |
 | **Danger** | `enableExtremeThinking` | Unlocks 16M token context window (User assumes quota risk). |
@@ -152,11 +153,22 @@ The core logic inside `gemini-adaptive.user.js` is highly modular. You can easil
 
 ---
 
-## 📚 Documentation
+## 🧪 Testing & Verification
 
-Detailed documentation is available in our [Project Wiki](https://github.com/RE3CON/Gemini-Pro/wiki). 
+To ensure that your spoofing, anti-fingerprinting, and identity masking features are working correctly, we recommend testing your browser environment using the following tools. The UserScript is configured to run on these domains automatically:
 
-The wiki is automatically synchronized with the `docs/` folder in this repository via GitHub Actions.
+- **[BrowserLeaks](https://browserleaks.com/)**: Comprehensive suite of tools to test WebRTC leaks, Canvas/WebGL fingerprinting, Font detection, and IP address exposure.
+- **[AmIUnique](https://www.amiunique.org/)**: Analyzes your browser fingerprint and compares it against a global database to see how identifiable your current configuration is.
+- **[Fingerprint.com](https://fingerprint.com/)**: Tests advanced device identification techniques, including audio context and hardware concurrency spoofing.
+- **[Pixelscan](https://pixelscan.net/)**: Checks for bot-like behavior, proxy/VPN usage, and verifies if your User-Agent and hardware headers match a legitimate device profile.
+
+---
+
+## 📚 Documentation & Wiki
+
+Detailed documentation, guides, and advanced configurations are available in our [Project Wiki](https://github.com/RE3CON/Gemini-AI/wiki). 
+
+*Note: The Wiki, Discussions, and Community Forums are hosted on the main [Gemini-AI](https://github.com/RE3CON/Gemini-AI) repository to centralize community efforts.*
 
 ---
 

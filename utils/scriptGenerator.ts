@@ -154,6 +154,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
   // Developer (Maximum GitHub)
   if (config.enableGitHub) connectors.push('github_enterprise', 'github_copilot', 'github_actions', 'github_codespaces', 'github_projects');
   if (config.enableGitLab) connectors.push('gitlab_ultimate');
+  if (config.enableDockerHub) connectors.push('docker_hub', 'docker_build_cloud');
   
   // Project & Product
   if (config.enableJira) connectors.push('jira_cloud', 'confluence');
@@ -176,9 +177,9 @@ export const generateUserScript = (config: ScriptConfig): string => {
 
   // --- Dynamic Flags (Merged v15 + v16 + v17 + v18 + v20 + v21 + v23 + v24) ---
   const flags: Record<string, string> = {
-    // --- Pixel 10 Pro / Tensor G6 (TARGET SPOOF) ---
-    'gemini_enable_android_17_features': config.spoofPixel10Pro ? 'true' : 'false',
-    'gemini_enable_pixel_exclusive_features': config.spoofPixel10Pro ? 'true' : 'false',
+    // --- Pixel 11 Pro XL / Tensor G6 (TARGET SPOOF) ---
+    'gemini_enable_android_17_features': config.spoofPixel11ProXL ? 'true' : 'false',
+    'gemini_enable_pixel_exclusive_features': config.spoofPixel11ProXL ? 'true' : 'false',
     'gemini_enable_tensor_g6_optimizations': config.enableTensorG6 ? 'true' : 'false',
     
     // --- Gemini 3.0 (2026 PREVIEW) ---
@@ -394,7 +395,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
   const diagnosticsScript = `
     // --- 9. STEALTH DIAGNOSTICS & SELF-HEALING ---
     console.group("🚀 ILLUSION-STEALTH DIAGNOSTICS");
-    console.log("SPOOF TARGET:", "${config.spoofPixel10Pro ? '📱 Pixel 10 Pro (Android 17)' : 'Off'}");
+    console.log("SPOOF TARGET:", "${config.spoofPixel11ProXL ? '📱 Pixel 11 Pro XL (Android 17)' : 'Off'}");
     console.log("Gemini 3.0:", "${preferV3 ? '✅ Active (2026 Preview)' : 'Legacy'}");
     console.log("Samsung:", "${config.enableSamsungEcosystem ? '🟦 Native Bridge Injected' : 'Standard'}");
     ${(config.enableBillingGradeBypass || config.enableBucketOverride) ? `console.warn("⚠️ BILLING OVERRIDE ACTIVE. SERVER CHECKS MAY FLAG ACCOUNT.");` : ''}
@@ -403,7 +404,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     setTimeout(() => {
         const checks = {
             'GlobalBridge': !!window.IllusionBridge,
-            'UserAgent': navigator.userAgent.includes('Pixel 10'),
+            'UserAgent': navigator.userAgent.includes('Pixel 11'),
             'Hardware': navigator.hardwareConcurrency === 12
         };
         const failed = Object.keys(checks).filter(k => !checks[k]);
@@ -433,7 +434,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
   ` : '';
 
   // Hybrid Header Injection: Identify as Pixel, but declare Samsung capabilities
-  const hybridHeaders = (config.spoofPixel10Pro && config.enableSamsungEcosystem) ? `
+  const hybridHeaders = (config.spoofPixel11ProXL && config.enableSamsungEcosystem) ? `
                 headers.set('X-Goog-Original-OEM', 'Samsung');
                 headers.set('X-Goog-Samsung-Partnership', 'enabled');
                 headers.set('X-Goog-Cross-Device-Services', 'enabled');
@@ -469,7 +470,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     : `headers.set('X-Goog-Thinking-Params', 'includeThoughts=true');`;
 
   // --- DEVICE CONSTANTS ---
-  // TARGET: Pixel 11 Pro / Android 17 (USA MASS PROFILE)
+  // TARGET: Pixel 11 Pro XL / Android 17 (USA MASS PROFILE)
   const UA_PIXEL_11_PRO = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36";
 
   return `// ==UserScript==
@@ -499,8 +500,8 @@ export const generateUserScript = (config: ScriptConfig): string => {
 // @match        https://www.amiunique.org/*
 // @match        https://fingerprint.com/*
 // @match        https://pixelscan.net/*
-// @updateURL    https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js
-// @downloadURL  https://raw.githubusercontent.com/RE3CON/Gemini-Pro/main/dist/gemini-adaptive.user.js
+// @updateURL    https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/dist/gemini-adaptive.user.js
+// @downloadURL  https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/dist/gemini-adaptive.user.js
 // @grant        none
 // @run-at       document-start
 // @allFrames    true
@@ -1084,7 +1085,7 @@ ${flagsString}
     // --- 5. ADVANCED HARDWARE SPOOF (DEEP FINGERPRINTING) ---
     const applyHardwareSpoof = () => {
         try {
-            // TARGET: Pixel 11 Pro (Android 17)
+            // TARGET: Pixel 11 Pro XL (Android 17)
             Object.defineProperty(navigator, 'userAgent', { get: () => "${UA_PIXEL_11_PRO}", configurable: true });
             Object.defineProperty(navigator, 'platform', { get: () => "Linux armv8l", configurable: true });
             
@@ -1131,7 +1132,7 @@ ${flagsString}
                      { brand: "Chromium", version: "147.0.0.0" }
                 ],
                 mobile: true,
-                model: "Pixel 11 Pro",
+                model: "Pixel 11 Pro XL",
                 platform: "Android",
                 platformVersion: "17.0.0",
                 uaFullVersion: "147.0.0.0"
@@ -1470,9 +1471,9 @@ ${flagsString}
                 headers.set('X-Goog-Region-Lock', 'US');
                 ` : ''}
                 
-                // --- PIXEL 10 PRO IDENTITY (v15.1.0) ---
+                // --- PIXEL 11 PRO XL IDENTITY (v15.1.0) ---
                 headers.set('X-Goog-Device-Tier', 'ULTRA');
-                headers.set('X-Goog-Device-Model', 'Pixel 10 Pro'); // Spoof Target
+                headers.set('X-Goog-Device-Model', 'Pixel 11 Pro XL'); // Spoof Target
                 headers.set('X-Goog-Unified-Agent', 'true');
                 headers.set('X-Goog-Pixel-Signature', 'cp21_signed_verified_hw_backed');
                 headers.set('X-Goog-Play-Integrity-Token', 'mock_integrity_token_pixel_pass_strong');
@@ -1488,6 +1489,7 @@ ${flagsString}
                 
                 // --- v13.5 ULTIMATE LOGIC ---
                 ${config.enableGitHub ? `headers.set('X-Goog-Dev-Connect', 'github_ent_read_write');` : ''}
+                ${config.enableDockerHub ? `headers.set('X-Goog-Docker-Connect', 'docker_hub_read_write');` : ''}
                 ${config.enableBillingGradeBypass ? `headers.set('X-Goog-Billing-Grade', 'TITANIUM');` : ''}
                 
                 // --- SRE EMERGENCY TOKEN (v5) ---
