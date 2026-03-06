@@ -137,11 +137,22 @@ The core logic inside `gemini-adaptive.user.js` is highly modular. You can easil
 
 ---
 
-## 📚 Documentation
+## 🧪 Testing & Verification
 
-Detailed documentation is available in our [Project Wiki](https://github.com/RE3CON/Gemini-Pro/wiki). 
+To ensure that your spoofing, anti-fingerprinting, and identity masking features are working correctly, we recommend testing your browser environment using the following tools. The UserScript is configured to run on these domains automatically:
 
-The wiki is automatically synchronized with the `docs/` folder in this repository via GitHub Actions.
+- **[BrowserLeaks](https://browserleaks.com/)**: Comprehensive suite of tools to test WebRTC leaks, Canvas/WebGL fingerprinting, Font detection, and IP address exposure.
+- **[AmIUnique](https://www.amiunique.org/)**: Analyzes your browser fingerprint and compares it against a global database to see how identifiable your current configuration is.
+- **[Fingerprint.com](https://fingerprint.com/)**: Tests advanced device identification techniques, including audio context and hardware concurrency spoofing.
+- **[Pixelscan](https://pixelscan.net/)**: Checks for bot-like behavior, proxy/VPN usage, and verifies if your User-Agent and hardware headers match a legitimate device profile.
+
+---
+
+## 📚 Documentation & Wiki
+
+Detailed documentation, guides, and advanced configurations are available in our [Project Wiki](https://github.com/RE3CON/Gemini-AI/wiki). 
+
+*Note: The Wiki, Discussions, and Community Forums are hosted on the main [Gemini-AI](https://github.com/RE3CON/Gemini-AI) repository to centralize community efforts.*
 
 ---
 
