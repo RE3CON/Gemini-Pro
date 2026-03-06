@@ -46,14 +46,22 @@ It includes active modules for:
 
 The script is configured to run on several popular browser fingerprinting test pages so you can verify its effectiveness. Visit any of the following to see the spoofing in action:
 
-```javascript
-// @match        https://bot.sannysoft.com/*
-// @match        https://pixelscan.net/*
-// @match        https://amiunique.org/*
-// @match        https://browserleaks.com/*
-// @match        https://coveryourtracks.eff.org/*
-// @match        https://abrahamjuliot.github.io/creepjs/*
-```
+
+## Cost Comparison: Obtaining Gemini AI
+
+When hardening your identity, it's also important to consider *how* you access Gemini, as different subscription tiers have different privacy guarantees and price points.
+
+| Access Method | Estimated Cost | Privacy / Data Training | Best For |
+| :--- | :--- | :--- | :--- |
+| **Google Workspace + Gemini Business (US Pricing)** | **~$26 / month**<br>($6 Workspace + $20 Add-on) | **Enterprise Privacy.** Data is strictly isolated and *never* used to train Google's base models. | Privacy-conscious users wanting strict data sovereignty. |
+| **Google Workspace + Gemini Business (Regional, e.g., Turkey)** | **~$10 - $15 / month**<br>(Varies by local currency) | **Enterprise Privacy.** Same strict data isolation as US Enterprise plans. | Sovereign users looking for enterprise privacy at a lower cost than personal plans. |
+| **Google One AI Premium** (Gemini Advanced) | **~$20 / month** | Personal terms. Google states they don't train on Gemini Advanced conversations, but telemetry exists. | Individual users wanting a simple, all-in-one package. |
+| **Google AI Studio (API) - Free Tier** | **$0** | Prompts/data *are* used to train models (human reviewers may read them). | Prototyping and non-sensitive tasks. |
+| **Google AI Studio (API) - Paid Tier** | **Pay-as-you-go** | Data is *not* used for training. | Developers and power users building custom interfaces. |
+
+**Recommendation for Sovereignty & Cost:** If you want the absolute highest level of data privacy combined with this script's fingerprint hardening, using a **Google Workspace** account with the **Gemini Business** add-on provides enterprise-grade legal protections against your data being used for model training. While the standard US pricing is slightly more expensive ($26 vs $20), users often leverage **regional pricing (e.g., registering a Workspace Business Standard account in Turkey)**. This can bring the combined cost down significantly—often making it *cheaper* than the standard $20/mo US Google One subscription—giving you enterprise privacy at a fraction of the cost. Alternatively, using the **Paid API** via a custom UI ensures strict data privacy at a potentially lower cost depending on your usage.
+
+## 🚀 Key Features
 
 ## Cost Comparison: Obtaining Gemini AI
 
