@@ -631,17 +631,6 @@ const GitHubIssues: React.FC = () => {
   );
 };
 
-const FeatureItem = ({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) => (
-  <li className="flex items-start gap-3">
-    <div className="mt-1 p-1.5 bg-white/5 rounded-lg text-gold-400">
-      {React.cloneElement(icon as React.ReactElement, { size: 14 })}
-    </div>
-    <div>
-      <h4 className="text-xs font-bold text-white">{title}</h4>
-      <p className="text-[10px] text-[#8E9299]">{desc}</p>
-    </div>
-  </li>
-);
 
 export default function App() {
   const [config, setConfig] = useState<ScriptConfig>(INITIAL_CONFIG);
