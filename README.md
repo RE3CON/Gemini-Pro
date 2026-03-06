@@ -62,11 +62,11 @@ While the UI presents many advanced features (like device spoofing and deep syst
 - **Anti-Fingerprinting**: Injects noise into Canvas and Audio APIs to prevent tracking.
 - **Telemetry Firewall**: Blocks outgoing analytics and usage tracking.
 - **Sovereign State**: Forces regional locks and spoofs high-end hardware (Pixel 11 Pro XL).
-- **Hardware Spoofing:** Simulates an RTX 3080 / 16-Core / 8GB environment.
-- **Network Stealth:** Spoofs 4G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
+- **Hardware Spoofing:** Simulates an Adreno 750 / 8-Core / 16GB environment.
+- **Network Stealth:** Spoofs 5G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
 - **Masking Engine:** Protects spoofed functions from `.toString()` detection.
 - **Jitter Logic:** Injects noise into timing APIs (`performance.now`) and `requestAnimationFrame`.
-- **GNOME Simulation:** Provides realistic screen geometry for Linux desktop environments.
+- **Android Simulation:** Provides realistic screen geometry and touch events for Android mobile environments.
 
 ### 🌐 App Experience
 - **PWA Support:** Install the application directly to your device.
