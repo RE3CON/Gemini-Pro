@@ -86,6 +86,7 @@ While the UI presents many advanced features (like device spoofing and deep syst
 | | `enableOmniMaximus` | Injects "God Mode" headers for unrestricted model access. |
 | **Input** | `enableContinuousVoice` | Overrides WebSpeech API timeouts for infinite dictation. |
 | | `enableTermuxBridge` | Creates a bridge to execute local shell commands via Termux. |
+| **Developer** | `enableDockerHub` | Injects Docker Hub read/write headers for container orchestration and build cloud integration. |
 | **Commerce** | `enableKleinanzeigen` | Native intent hooks for the German Kleinanzeigen marketplace. |
 | | `enableIdealo` | Real-time price comparison bridge for EU markets. |
 | **Danger** | `enableExtremeThinking` | Unlocks 16M token context window (User assumes quota risk). |

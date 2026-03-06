@@ -92,6 +92,7 @@ const INITIAL_CONFIG: ScriptConfig = {
   // Enterprise Core
   enableGitHub: false,
   enableGitLab: false,
+  enableDockerHub: false,
   enableJira: false,
   enableSlack: false,
   enableSalesforce: false,
@@ -443,6 +444,7 @@ const SECTION_DEFINITIONS = [
     items: [
       { key: 'enableGitHub', label: 'GitHub Enterprise' },
       { key: 'enableGitLab', label: 'GitLab Ultimate' },
+      { key: 'enableDockerHub', label: 'Docker Hub' },
       { key: 'enableReplit', label: 'Replit Ecosystem' },
       { key: 'enableProjectIDX', label: 'Project IDX' },
       { key: 'enableGitPod', label: 'GitPod' },

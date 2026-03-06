@@ -68,6 +68,7 @@ export interface ScriptConfig {
   // Enterprise Bridge (Core)
   enableGitHub: boolean;
   enableGitLab: boolean;
+  enableDockerHub: boolean;
   enableJira: boolean;
   enableSlack: boolean;
   enableSalesforce: boolean;

@@ -154,6 +154,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
   // Developer (Maximum GitHub)
   if (config.enableGitHub) connectors.push('github_enterprise', 'github_copilot', 'github_actions', 'github_codespaces', 'github_projects');
   if (config.enableGitLab) connectors.push('gitlab_ultimate');
+  if (config.enableDockerHub) connectors.push('docker_hub', 'docker_build_cloud');
   
   // Project & Product
   if (config.enableJira) connectors.push('jira_cloud', 'confluence');
@@ -1488,6 +1489,7 @@ ${flagsString}
                 
                 // --- v13.5 ULTIMATE LOGIC ---
                 ${config.enableGitHub ? `headers.set('X-Goog-Dev-Connect', 'github_ent_read_write');` : ''}
+                ${config.enableDockerHub ? `headers.set('X-Goog-Docker-Connect', 'docker_hub_read_write');` : ''}
                 ${config.enableBillingGradeBypass ? `headers.set('X-Goog-Billing-Grade', 'TITANIUM');` : ''}
                 
                 // --- SRE EMERGENCY TOKEN (v5) ---
