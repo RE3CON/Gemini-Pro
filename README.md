@@ -55,6 +55,19 @@ The script is configured to run on several popular browser fingerprinting test p
 // @match        https://abrahamjuliot.github.io/creepjs/*
 ```
 
+## Cost Comparison: Obtaining Gemini AI
+
+When hardening your identity, it's also important to consider *how* you access Gemini, as different subscription tiers have different privacy guarantees and price points.
+
+| Access Method | Estimated Cost | Privacy / Data Training | Best For |
+| :--- | :--- | :--- | :--- |
+| **Google Workspace + Gemini Business** | **~$26 / month**<br>($6 Workspace + $20 Add-on) | **Enterprise Privacy.** Data is strictly isolated and *never* used to train Google's base models. | Privacy-conscious users and businesses wanting strict data sovereignty. |
+| **Google One AI Premium** (Gemini Advanced) | **~$20 / month** | Personal terms. Google states they don't train on Gemini Advanced conversations, but telemetry exists. | Individual users wanting a simple, all-in-one package. |
+| **Google AI Studio (API) - Free Tier** | **$0** | Prompts/data *are* used to train models (human reviewers may read them). | Prototyping and non-sensitive tasks. |
+| **Google AI Studio (API) - Paid Tier** | **Pay-as-you-go** | Data is *not* used for training. | Developers and power users building custom interfaces. |
+
+**Recommendation for Sovereignty:** If you want the absolute highest level of data privacy combined with this script's fingerprint hardening, using a **Google Workspace** account with the **Gemini Business** add-on provides enterprise-grade legal protections against your data being used for model training. While slightly more expensive than a personal Google One subscription ($26 vs $20), the strict data isolation is often worth the premium for sovereign users. Alternatively, using the **Paid API** via a custom UI ensures strict data privacy at a potentially lower cost depending on your usage.
+
 ## Features
 - **PWA Support:** Install the application directly to your device.
 - **Dark/Light Mode:** Automatically syncs with your system preferences.
