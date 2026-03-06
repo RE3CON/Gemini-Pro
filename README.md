@@ -9,6 +9,13 @@
   <a href="https://github.com/RE3CON/Gemini-Pro/releases/latest">
     <img src="https://img.shields.io/github/v/release/RE3CON/Gemini-Pro?style=for-the-badge" alt="Latest Release" />
   </a>
+  <br/>
+  <a href="https://github.com/RE3CON/Gemini-Pro/issues">
+    <img src="https://img.shields.io/github/issues/RE3CON/Gemini-Pro?style=for-the-badge" alt="Issues" />
+  </a>
+  <a href="https://github.com/RE3CON/Gemini-Pro/discussions">
+    <img src="https://img.shields.io/badge/💬_Forum-Discussions-purple?style=for-the-badge" alt="Discussions" />
+  </a>
 </div>
 <br/>
 
@@ -55,6 +62,17 @@ While the UI presents many advanced features (like device spoofing and deep syst
 - **Anti-Fingerprinting**: Injects noise into Canvas and Audio APIs to prevent tracking.
 - **Telemetry Firewall**: Blocks outgoing analytics and usage tracking.
 - **Sovereign State**: Forces regional locks and spoofs high-end hardware (Pixel 10 Pro).
+- **Hardware Spoofing:** Simulates an RTX 3080 / 16-Core / 8GB environment.
+- **Network Stealth:** Spoofs 4G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
+- **Masking Engine:** Protects spoofed functions from `.toString()` detection.
+- **Jitter Logic:** Injects noise into timing APIs (`performance.now`) and `requestAnimationFrame`.
+- **GNOME Simulation:** Provides realistic screen geometry for Linux desktop environments.
+
+### 🌐 App Experience
+- **PWA Support:** Install the application directly to your device.
+- **Dark/Light Mode:** Automatically syncs with your system preferences.
+- **AI Logo Generation:** Generate unique, transparent, and colorful security-focused logos using the Gemini API.
+- **Auto-Updates:** The script includes `@updateURL` and `@downloadURL` pointing to this repository, ensuring you always have the latest version.
 
 ---
 
@@ -101,6 +119,55 @@ The web suite allows you to toggle over 200+ flags to customize your experience.
 This project is fully integrated with GitHub Actions:
 - **Android CI**: Automatically builds your APK whenever you push changes to the source code.
 - **Web Deploy**: (Optional) Deploy this configuration suite to GitHub Pages for easy access.
+
+---
+
+## 🛠️ Compilers, Ports & Prototyping
+
+This project is built using modern web technologies (React, Vite, TypeScript) and compiled via **GitHub Actions**. 
+
+To compile the web app and extract the UserScript locally:
+1. Clone the repository: `git clone https://github.com/RE3CON/Gemini-Pro.git`
+2. Install dependencies: `npm install`
+3. Build the project: `npm run build`
+4. Extract the UserScript: The script is embedded in `src/App.tsx`. You can write a quick Node script to extract it or use the automated GitHub Action workflow provided in `.github/workflows/`.
+
+**Porting & Enhancements:**
+The core logic inside `gemini-adaptive.user.js` is highly modular. You can easily port this to a native Chrome/Firefox Extension by wrapping the core IIFE inside a `content_script.js` and adding a `manifest.json`. We encourage the community to prototype new stealth modules (e.g., Canvas/WebGL poisoning) and submit them!
+
+---
+
+## 📚 Documentation
+
+Detailed documentation is available in our [Project Wiki](https://github.com/RE3CON/Gemini-Pro/wiki). 
+
+The wiki is automatically synchronized with the `docs/` folder in this repository via GitHub Actions.
+
+---
+
+## 🐛 Bug Tracker & Forum
+
+We utilize the full suite of GitHub features to manage this project:
+- **[Bug Tracker (Issues)](https://github.com/RE3CON/Gemini-Pro/issues):** Found a fingerprint leak? Does the script break a specific Google AI feature? Open an issue using our provided bug report templates.
+- **[Community Forum (Discussions)](https://github.com/RE3CON/Gemini-Pro/discussions):** Have an idea for a new spoofing technique? Want to discuss the future of AI privacy? Join the GitHub Discussions tab!
+
+---
+
+## 📦 Releases & Packages
+
+We use **GitHub Releases** and **GitHub Packages** to distribute stable versions of the UserScript and the compiled Web App. 
+- Check the [Releases](https://github.com/RE3CON/Gemini-Pro/releases) page for versioned downloads, changelogs, and source code archives.
+- The CI/CD pipeline automatically builds and attaches artifacts (the raw `.user.js` and the compiled `dist/` folder) to every successful run on the `main` branch.
+
+---
+
+## 🤝 Community & Contributing
+
+We invite the community to join and help improve this project! Whether you're finding bugs, suggesting new features, or submitting pull requests for better fingerprint hardening techniques, your contributions are highly valued. 
+
+- **Fork the repository** to experiment with your own ideas.
+- **Open an issue** to discuss potential changes or report bugs.
+- **Submit a Pull Request!** Let's build the ultimate privacy shield together.
 
 ---
 
