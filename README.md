@@ -61,7 +61,7 @@ While the UI presents many advanced features (like device spoofing and deep syst
 ### 🛡️ Stealth & Security
 - **Anti-Fingerprinting**: Injects noise into Canvas and Audio APIs to prevent tracking.
 - **Telemetry Firewall**: Blocks outgoing analytics and usage tracking.
-- **Sovereign State**: Forces regional locks and spoofs high-end hardware (Pixel 10 Pro).
+- **Sovereign State**: Forces regional locks and spoofs high-end hardware (Pixel 11 Pro XL).
 - **Hardware Spoofing:** Simulates an RTX 3080 / 16-Core / 8GB environment.
 - **Network Stealth:** Spoofs 4G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
 - **Masking Engine:** Protects spoofed functions from `.toString()` detection.
@@ -82,7 +82,7 @@ While the UI presents many advanced features (like device spoofing and deep syst
 | :--- | :--- | :--- |
 | **Performance** | `enableLudicrousSpeed` | Bypasses standard API rate limits using internal priority headers. |
 | | `enableHyperVelocity` | Removes DOM bloat and CSS transitions for raw speed. |
-| **Identity** | `spoofPixel10Pro` | Spoofs the device as a Pixel 10 Pro (Android 17) to unlock exclusive features. |
+| **Identity** | `spoofPixel11ProXL` | Spoofs the device as a Pixel 11 Pro XL (Android 17) to unlock exclusive features. |
 | | `enableOmniMaximus` | Injects "God Mode" headers for unrestricted model access. |
 | **Input** | `enableContinuousVoice` | Overrides WebSpeech API timeouts for infinite dictation. |
 | | `enableTermuxBridge` | Creates a bridge to execute local shell commands via Termux. |

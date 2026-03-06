@@ -1,57 +1,39 @@
 import fs from 'fs';
-import path from 'path';
 
 async function createRelease() {
-  const token = fs.readFileSync('.token', 'utf-8').trim();
-  const repo = 'RE3CON/Gemini-Pro';
-  
-  console.log('Creating release...');
-  const releaseRes = await fetch(`https://api.github.com/repos/${repo}/releases`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      tag_name: 'v1.0.0',
-      name: 'Gemini Adaptive Suite v1.0.0',
-      body: 'Initial release of the Gemini Adaptive Suite.\n\n### Features\n- Sovereign Productivity Bridge\n- UserScript Generation\n- Android Wrapper Generation\n- Deep Ecosystem Integrations\n\nDownload the `gemini-adaptive.user.js` asset below to install directly into Tampermonkey/Violentmonkey.',
-      draft: false,
-      prerelease: false
-    })
-  });
-  
-  if (!releaseRes.ok) {
-    const err = await releaseRes.text();
-    console.error('Failed to create release:', err);
-    return;
-  }
-  
-  const releaseData = await releaseRes.json();
-  console.log('Release created:', releaseData.html_url);
-  
-  // Upload asset
-  const uploadUrl = releaseData.upload_url.replace('{?name,label}', '?name=gemini-adaptive.user.js');
-  const assetPath = 'dist/gemini-adaptive.user.js';
-  const assetContent = fs.readFileSync(assetPath);
-  
-  console.log('Uploading asset...');
-  const uploadRes = await fetch(uploadUrl, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/javascript'
-    },
-    body: assetContent
-  });
-  
-  if (!uploadRes.ok) {
-    const err = await uploadRes.text();
-    console.error('Failed to upload asset:', err);
-  } else {
-    console.log('Asset uploaded successfully!');
+  try {
+    const token = fs.readFileSync('.token', 'utf-8').trim();
+    const repo = 'RE3CON/Gemini-Pro';
+    const tag = 'v27.9.23';
+    const name = 'Gemini Adaptive Suite v27.9.23';
+    const body = `## ⚠️ About This Project & Technical Reality\n\n**This project is currently a coding test and showcase built with the absolutely genius Gemini Coding Assistant!**\n\nWhile the UI presents many advanced features (like device spoofing and deep system integrations), these are currently placebos in the UserScript context. \n\n**The Technical Reality:** To achieve *real* UA spoofing and complete control over Chrome-based browsers on Android, you must use **ADB commands** to run Chrome with insecure command-line flags and modify the browser's \`Local State\` file. A simple UserScript cannot bypass these Android-level security restrictions.\n\n**Future Plans:** I recently acquired Gemini Pro on Google Workspace Business Turkey, and this repository will soon pivot to something completely different and highly useful—focusing on real AI tips, related tech, and special offers. Stay tuned!`;
+
+    const response = await fetch(`https://api.github.com/repos/${repo}/releases`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        tag_name: tag,
+        name: name,
+        body: body,
+        draft: false,
+        prerelease: false
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`Release created successfully: ${data.html_url}`);
+    } else {
+      const error = await response.text();
+      console.error(`Failed to create release: ${response.status} ${response.statusText}`);
+      console.error(error);
+    }
+  } catch (e) {
+    console.error(e);
   }
 }
 

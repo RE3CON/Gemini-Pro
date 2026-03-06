@@ -20,7 +20,7 @@ const INITIAL_CONFIG: ScriptConfig = {
   
   // --- RECOMMENDED DEFAULTS ---
   // Core Identity & Speed
-  spoofPixel10Pro: true,
+  spoofPixel11ProXL: true,
   enableOmniMaximus: true,
   enableLudicrousSpeed: true,
   enableHyperVelocity: true,
@@ -314,7 +314,7 @@ const SECTION_DEFINITIONS = [
     items: [
       { key: 'enableOmniMaximus', label: 'Enable ILLUSION-MAXIMUS (God Mode Headers)' },
       { key: 'enableSovereignState', label: 'Enable Sovereign State (Region Lock)' },
-      { key: 'spoofPixel10Pro', label: 'Spoof Pixel 10 Pro (Android 17) [Target]' },
+      { key: 'spoofPixel11ProXL', label: 'Spoof Pixel 11 Pro XL (Android 17) [Target]' },
       { key: 'enableCanaryBuild', label: 'Enable Canary/Internal Build (Dogfood)' },
       { key: 'enableHighFidelityMedia', label: 'Nano Banana 3 / 8K Media' },
       { key: 'enableExperimentalModels', label: 'Experimental & Labs Models' },
@@ -751,7 +751,7 @@ const App: React.FC = () => {
         setConfig(prev => ({
           ...INITIAL_CONFIG,
           // S24 Ultra Native Mix (2026 Edition - v24.0)
-          spoofPixel10Pro: true,
+          spoofPixel11ProXL: true,
           enableGemini3_0Pro: true, 
           enableSamsungEcosystem: true,
           enableSamsungNotes: true,
@@ -852,7 +852,7 @@ const App: React.FC = () => {
     if (config.enableGemini3_0Pro && config.enableGemini2_0Pro) list.push("ℹ️ PRIORITY: Gemini 3.0 will take precedence over Gemini 2.0 settings.");
 
     // HYBRID
-    if (config.spoofPixel10Pro && config.enableSamsungEcosystem) list.push("📱 HYBRID IDENTITY: Pixel 10 Pro + S24 Ultra Fusion.");
+    if (config.spoofPixel11ProXL && config.enableSamsungEcosystem) list.push("📱 HYBRID IDENTITY: Pixel 11 Pro XL + S24 Ultra Fusion.");
     
     // STEALTH
     if (config.enableCanvasNoise || config.enableAudioNoise) list.push("👻 STEALTH MATRIX: Fingerprinting noise generators active.");
@@ -1123,7 +1123,7 @@ const App: React.FC = () => {
              </p>
           </div>
 
-          <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel10Pro ? "Mozilla/5.0 (Linux; Android 17; Pixel 10 Pro Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />
+          <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel11ProXL ? "Mozilla/5.0 (Linux; Android 17; Pixel 11 Pro XL Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />
         </div>
         )}
 
