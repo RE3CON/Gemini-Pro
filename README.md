@@ -45,12 +45,15 @@ It includes active modules for:
 ## Browser Test Pages
 
 The script is configured to run on several popular browser fingerprinting test pages so you can verify its effectiveness. Visit any of the following to see the spoofing in action:
-- [Bot Sannysoft](https://bot.sannysoft.com/)
-- [Pixelscan](https://pixelscan.net/)
-- [AmIUnique](https://amiunique.org/)
-- [BrowserLeaks](https://browserleaks.com/)
-- [Cover Your Tracks (EFF)](https://coveryourtracks.eff.org/)
-- [CreepJS](https://abrahamjuliot.github.io/creepjs/)
+
+```javascript
+// @match        https://bot.sannysoft.com/*
+// @match        https://pixelscan.net/*
+// @match        https://amiunique.org/*
+// @match        https://browserleaks.com/*
+// @match        https://coveryourtracks.eff.org/*
+// @match        https://abrahamjuliot.github.io/creepjs/*
+```
 
 ## Features
 - **PWA Support:** Install the application directly to your device.

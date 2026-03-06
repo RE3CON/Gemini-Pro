@@ -19,12 +19,11 @@ const MERGED_SCRIPT = `// ==UserScript==
 // @match        https://assistant.google.com/*
 // @match        https://*.google.dev/*
 // @match        https://chatgpt.com/*
-// @match        https://browserleaks.com/*
-// @match        https://amiunique.org/*
-// @match        https://coveryourtracks.eff.org/*
 // @match        https://bot.sannysoft.com/*
-// @match        https://abrahamjuliot.github.io/creepjs/*
 // @match        https://pixelscan.net/*
+// @match        https://amiunique.org/*
+// @match        https://browserleaks.com/*
+// @match        https://coveryourtracks.eff.org/*
 // @match        https://abrahamjuliot.github.io/creepjs/*
 // @updateURL    https://raw.githubusercontent.com/RE3CON/Gemini-AI/main/google-ai-identity.user.js
 // @downloadURL  https://raw.githubusercontent.com/RE3CON/Gemini-AI/main/google-ai-identity.user.js
