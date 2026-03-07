@@ -1,31 +1,22 @@
 import { Octokit } from "@octokit/rest";
-import fs from 'fs';
 
 const octokit = new Octokit({ auth: 'ghp_***MASKED***' });
 const owner = 'RE3CON';
 const repo = 'Gemini-Pro';
+const run_id = '22797868676';
 
 async function getLogs() {
   try {
-    const jobsResponse = await octokit.actions.listJobsForWorkflowRun({
+    const logs = await octokit.rest.actions.getWorkflowRunLogs({
       owner,
       repo,
-      run_id: 22797222044,
+      run_id
     });
     
-    for (const job of jobsResponse.data.jobs) {
-      if (job.conclusion === 'failure') {
-        const logResponse = await octokit.actions.downloadJobLogsForWorkflowRun({
-          owner,
-          repo,
-          job_id: job.id,
-        });
-        fs.writeFileSync('job_log.txt', logResponse.data);
-        console.log('Log written to job_log.txt');
-      }
-    }
+    console.log(`Logs URL: ${logs.url}`);
+    
   } catch (error) {
-    console.error(`Error:`, error.message);
+    console.error(`Error fetching logs:`, error.message);
   }
 }
 
