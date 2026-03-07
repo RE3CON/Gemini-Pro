@@ -2,12 +2,12 @@
 
 ## Supported Versions
 
-We take security seriously. Please ensure you are running the latest version of the Gemini Adaptive Suite.
+We take security seriously. Please ensure you are running the latest version of the AI Identity Hardener.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 27.x.x  | :white_check_mark: |
-| < 27.x  | :x:                |
+| 12.5.x  | :white_check_mark: |
+| < 12.5  | :x:                |
 
 ## Reporting a Vulnerability
 

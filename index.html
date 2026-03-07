@@ -1,39 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#FF4444" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gemini Omni-Sync Configurator</title>
-    <meta name="theme-color" content="#0f172a" />
-    <link rel="manifest" href="/public/manifest.json" />
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
+    <!-- SEO Meta Tags -->
+    <title>AI Identity Hardener | Sovereign Fingerprint Protection</title>
+    <meta name="description" content="Ultimate Chrome fingerprint hardening for Google AI services. Sovereign Golden Master architecture with zero-blindspot protection against tracking and behavioral analysis." />
+    <meta name="keywords" content="AI Identity Hardener, Browser Fingerprinting, Privacy, Google AI, Gemini, AI Studio, Tampermonkey, Violentmonkey, UserScript, Anti-Tracking, WebRTC Leak Protection, Hardware Spoofing" />
+    <meta name="author" content="RE3CON" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://re3con.github.io/Gemini-AI/" />
+    <meta property="og:title" content="AI Identity Hardener | Sovereign Fingerprint Protection" />
+    <meta property="og:description" content="Ultimate Chrome fingerprint hardening for Google AI services. Sovereign Golden Master architecture with zero-blindspot protection against tracking and behavioral analysis." />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://re3con.github.io/Gemini-AI/" />
+    <meta property="twitter:title" content="AI Identity Hardener | Sovereign Fingerprint Protection" />
+    <meta property="twitter:description" content="Ultimate Chrome fingerprint hardening for Google AI services. Sovereign Golden Master architecture with zero-blindspot protection against tracking and behavioral analysis." />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              gold: {
-                400: '#fbbf24',
-                500: '#f59e0b',
-                600: '#d97706',
-              },
-              space: {
-                800: '#1e293b',
-                900: '#0f172a',
-                950: '#020617',
-              }
-            },
-            fontFamily: {
-              mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
-            }
-          }
-        }
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed: ', err));
+        });
       }
     </script>
-<link rel="stylesheet" href="/index.css">
-</head>
-  <body class="bg-space-950 text-slate-200 antialiased">
-    <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+  </body>
 </html>
+
