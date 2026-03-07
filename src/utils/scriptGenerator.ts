@@ -188,10 +188,15 @@ export const generateUserScript = (config: ScriptConfig): string => {
     'gemini_default_model_family': preferV3 ? 'gemini_3' : 'gemini_2',
     'gemini_model_switcher_v3': preferV3 ? 'true' : 'false',
     
-    // --- Gemini 2.0 (LEGACY / FALLBACK) ---
-    'gemini_enable_flash_2_0_preview': config.enableGemini2_0Flash ? 'true' : 'false',
-    'gemini_enable_pro_2_0_preview': config.enableGemini2_0Pro ? 'true' : 'false',
-    'gemini_enable_model_switcher_v2': (config.enableGemini2_0Flash || config.enableGemini2_0Pro) ? 'true' : 'false',
+    // --- Gemini 3.1 (2026 PREVIEW) ---
+    'gemini_enable_flash_3_1_preview': config.enableGemini3_1Flash ? 'true' : 'false',
+    'gemini_enable_pro_3_1_preview': config.enableGemini3_1Pro ? 'true' : 'false',
+    'gemini_enable_flash_3_1_image': config.enableGemini3_1FlashImage ? 'true' : 'false',
+    
+    // --- Gemini 2.5 (2025/2026) ---
+    'gemini_enable_flash_2_5_image': config.enableGemini2_5FlashImage ? 'true' : 'false',
+    'gemini_enable_native_audio_2_5': config.enableGemini2_5NativeAudio ? 'true' : 'false',
+    'gemini_enable_tts_2_5': config.enableGemini2_5TTS ? 'true' : 'false',
     
     // --- Next-Gen Multimodal (2026) ---
     'gemini_enable_multimodal_streaming_v3': preferV3 ? 'true' : 'false',
@@ -199,7 +204,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     'gemini_enable_deep_think_v2': (config.enableDeepThink && !preferV3) ? 'true' : 'false',
 
     // --- Samsung Ecosystem (HYBRID INJECTION) ---
-    'gemini_enable_samsung_partnership_features': (config.enableSamsungEcosystem || config.spoofPixel10Pro) ? 'true' : 'false',
+    'gemini_enable_samsung_partnership_features': (config.enableSamsungEcosystem || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_enable_samsung_notes_integration': config.enableSamsungNotes ? 'true' : 'false',
     'gemini_enable_samsung_gallery_integration': config.enableSamsungGallery ? 'true' : 'false',
     'gemini_enable_samsung_calendar_bridge': config.enableSamsungCalendar ? 'true' : 'false',
@@ -530,7 +535,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     };
     
     // --- 0. ACCESSIBILITY MODE ---
-    if (window.Android) { console.log("Native WebView Bridge Detected - Accessibility Mode Optimized"); }
+    if (typeof window !== 'undefined' && window.Android) { console.log("Native WebView Bridge Detected - Accessibility Mode Optimized"); }
 
     // --- 1. SOVEREIGN CONSTANTS (v5 RESTORED) ---
     const REPLIT_ID = 'recon_master_dev';

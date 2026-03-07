@@ -1,39 +1,46 @@
+import { Octokit } from "@octokit/rest";
 import fs from 'fs';
+
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+const owner = 'RE3CON';
+const repo = 'Gemini-AI';
+const tag_name = 'v1.0.0';
+const file_path = 'dist.zip';
 
 async function createRelease() {
   try {
-    const token = fs.readFileSync('.token', 'utf-8').trim();
-    const repo = 'RE3CON/Gemini-Pro';
-    const tag = 'v28.0.0';
-    const name = 'Gemini Adaptive Suite v28.0.0';
-    const body = `## ⚠️ About This Project & Technical Reality\n\n**This project is currently a coding test and showcase built with the absolutely genius Gemini Coding Assistant!**\n\nWhile the UI presents many advanced features (like device spoofing and deep system integrations), these are currently placebos in the UserScript context. \n\n**The Technical Reality:** To achieve *real* UA spoofing and complete control over Chrome-based browsers on Android, you must use **ADB commands** to run Chrome with insecure command-line flags and modify the browser's \`Local State\` file. A simple UserScript cannot bypass these Android-level security restrictions.\n\n**Future Plans:** I recently acquired Gemini Pro on Google Workspace Business Turkey, and this repository will soon pivot to something completely different and highly useful—focusing on real AI tips, related tech, and special offers. Stay tuned!`;
-
-    const response = await fetch(`https://api.github.com/repos/${repo}/releases`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        tag_name: tag,
-        name: name,
-        body: body,
-        draft: false,
-        prerelease: false
-      })
+    // 1. Create Release
+    const { data: release } = await octokit.repos.createRelease({
+      owner,
+      repo,
+      tag_name,
+      name: `Release ${tag_name}`,
+      body: 'Initial release of Gemini-AI',
+      draft: false,
+      prerelease: false
     });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(`Release created successfully: ${data.html_url}`);
-    } else {
-      const error = await response.text();
-      console.error(`Failed to create release: ${response.status} ${response.statusText}`);
-      console.error(error);
-    }
-  } catch (e) {
-    console.error(e);
+    
+    console.log(`Release ${tag_name} created successfully: ${release.html_url}`);
+    
+    // 2. Upload Asset
+    const content = fs.readFileSync(file_path);
+    
+    await octokit.repos.uploadReleaseAsset({
+      owner,
+      repo,
+      release_id: release.id,
+      name: file_path,
+      data: content,
+      headers: {
+        'content-type': 'application/zip',
+        'content-length': content.length
+      }
+    });
+    
+    console.log(`Asset ${file_path} uploaded successfully.`);
+    
+  } catch (error) {
+    console.error(`Error creating release:`, error.message);
   }
 }
 

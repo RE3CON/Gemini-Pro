@@ -18,7 +18,7 @@ async function listPRs() {
         console.log('No open pull requests.');
       } else {
         prs.data.forEach(pr => {
-          console.log(`PR #${pr.number}: ${pr.title} (Opened by: ${pr.user.login})`);
+          console.log(`PR #${pr.number}: ${pr.title} (Opened by: ${pr.user.login}, Created at: ${pr.created_at})`);
         });
       }
     } catch (error) {

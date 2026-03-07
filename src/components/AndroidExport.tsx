@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Smartphone, Copy, Check, Download, Code, Package } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
+import saveAs from 'file-saver';
 
 interface AndroidExportProps {
   scriptContent: string;
