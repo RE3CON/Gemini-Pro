@@ -1105,18 +1105,18 @@ ${flagsString}
             Object.defineProperty(navigator, 'webdriver', { get: () => undefined, configurable: true });
             
             ${config.enableScreenSpoof ? `
-            // DEEP SCREEN SPOOF
-            const screenMock = { width: 1280, height: 2856, availWidth: 1280, availHeight: 2828, colorDepth: 32, pixelDepth: 32 };
+            // DEEP SCREEN SPOOF (Pixel 11 Pro XL)
+            const screenMock = { width: 1440, height: 3200, availWidth: 1440, availHeight: 3200, colorDepth: 32, pixelDepth: 32 };
             Object.defineProperty(window, 'screen', { value: screenMock, writable: false });
-            Object.defineProperty(window, 'innerWidth', { get: () => 1280 / 3.5 });
-            Object.defineProperty(window, 'innerHeight', { get: () => 2828 / 3.5 });
-            Object.defineProperty(window, 'outerWidth', { get: () => 1280 / 3.5 });
-            Object.defineProperty(window, 'outerHeight', { get: () => 2828 / 3.5 });
+            Object.defineProperty(window, 'innerWidth', { get: () => 411 });
+            Object.defineProperty(window, 'innerHeight', { get: () => 914 });
+            Object.defineProperty(window, 'outerWidth', { get: () => 411 });
+            Object.defineProperty(window, 'outerHeight', { get: () => 914 });
             Object.defineProperty(window, 'devicePixelRatio', { get: () => 3.5 }); 
             
             if (window.visualViewport) {
-                Object.defineProperty(window.visualViewport, 'width', { get: () => 1280 / 3.5 });
-                Object.defineProperty(window.visualViewport, 'height', { get: () => 2828 / 3.5 });
+                Object.defineProperty(window.visualViewport, 'width', { get: () => 411 });
+                Object.defineProperty(window.visualViewport, 'height', { get: () => 914 });
             }
             // Block resize leakage
             window.addEventListener('resize', (e) => { e.stopImmediatePropagation(); }, true);

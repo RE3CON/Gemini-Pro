@@ -3,10 +3,11 @@
 The AI Identity Hardener includes several advanced modules to protect your browser fingerprint.
 
 ## 1. Hardware Spoofing
-- **GPU:** Simulates an NVIDIA GeForce RTX 3080.
-- **CPU:** Reports 16 hardware concurrency cores.
-- **Memory:** Reports 8GB of device memory.
-- **Platform:** Identifies as Linux x86_64 (GNOME style).
+- **Device:** Simulates a Google Pixel 11 Pro XL (Android 17).
+- **GPU:** Simulates Google Tensor G6 / PowerVR Rogue CXTP.
+- **CPU:** Reports 12 hardware concurrency cores (Tensor G6).
+- **Memory:** Reports 16GB of device memory.
+- **Platform:** Identifies as Linux Android 17.
 
 ## 2. Network Stealth
 - **Connection:** Spoofs a 4G effective connection type.
