@@ -10,10 +10,12 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { Switch } from './components/Switch';
 import { CodeBlock } from './components/CodeBlock';
 import { VoiceCommand } from './components/VoiceCommand';
 import { ClipboardTester } from './components/ClipboardTester';
+import { ClipboardButton } from './components/ClipboardButton';
 import { AndroidExport } from './components/AndroidExport';
 import { DeviceSync } from './components/DeviceSync';
 import { generateUserScript } from './utils/scriptGenerator';
@@ -592,7 +594,7 @@ const GitHubMarkdown: React.FC<{ url: string }> = ({ url }) => {
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 lg:p-10 overflow-auto prose prose-invert prose-slate max-w-none">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
     </div>
   );
 };
@@ -691,17 +693,6 @@ const App: React.FC = () => {
   }, [config, autoCopyEnabled]);
 
   useEffect(() => {
-    // Request microphone permission on startup
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-        console.log('Microphone access granted');
-        // Stop the tracks immediately as we don't need the stream yet
-        stream.getTracks().forEach(track => track.stop());
-      })
-      .catch(err => {
-        console.error('Microphone access denied or not supported:', err);
-      });
-
     // Check clipboard permission
     navigator.permissions.query({ name: 'clipboard-read' as PermissionName })
       .then(result => {
@@ -1436,39 +1427,39 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex-grow">
+            <div className="flex flex-col items-center justify-center my-4 gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <a 
+                  href="https://github.com/RE3CON/Gemini-Pro/raw/master/dist/gemini-adaptive.user.js"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:scale-[1.02]"
+                >
+                  <Play size={18} fill="currentColor" />
+                  <span>Install Default Script</span>
+                </a>
+                <a 
+                  href={downloadUrl}
+                  download="gemini-adaptive.user.js"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-500 text-black text-sm font-bold rounded-xl transition-all shadow-lg shadow-gold-900/20 hover:shadow-gold-900/40 hover:scale-[1.02]"
+                >
+                  <FileText size={18} fill="currentColor" />
+                  <span>Download Custom Script</span>
+                </a>
+                <button 
+                  onClick={() => setShowGithubModal(true)}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 hover:scale-[1.02]"
+                >
+                  <Github size={18} fill="currentColor" />
+                  <span>Push to GitHub</span>
+                </button>
+              </div>
+              <p className="mt-3 text-[10px] text-slate-500 text-center max-w-md">
+                <strong>Note:</strong> This is a coding test built with the genius Gemini Coding Assistant! Many advanced features shown here are UI placebos. True UA spoofing and complete control of Chrome on Android actually require <strong>ADB commands</strong> (which mostly make temporary changes in RAM). Most importantly, on Android without root, the <code>Local State</code> file is the real control center for Chrome-based browsers (especially since Developer Tools are not available in the mobile browser). You must modify this file alongside utilizing internal <code>chrome://</code> URLs, flags, and debug menus. <br/><br/>
+                <em>Stay tuned: This project will soon pivot to share real AI tips, tricks, and special offers!</em>
+              </p>
+            </div>
             <CodeBlock code={generatedScript} />
             <VoiceCommand />
-          </div>
-
-          <div className="flex flex-col items-center justify-center my-4 gap-3">
-             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-               <a 
-                 href="https://github.com/RE3CON/Gemini-Pro/raw/master/dist/gemini-adaptive.user.js"
-                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:scale-[1.02]"
-               >
-                 <Play size={18} fill="currentColor" />
-                 <span>Install Default Script</span>
-               </a>
-               <a 
-                 href={downloadUrl}
-                 download="gemini-adaptive.user.js"
-                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-500 text-black text-sm font-bold rounded-xl transition-all shadow-lg shadow-gold-900/20 hover:shadow-gold-900/40 hover:scale-[1.02]"
-               >
-                 <FileText size={18} fill="currentColor" />
-                 <span>Download Custom Script</span>
-               </a>
-               <button 
-                 onClick={() => setShowGithubModal(true)}
-                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 hover:scale-[1.02]"
-               >
-                 <Github size={18} fill="currentColor" />
-                 <span>Push to GitHub</span>
-               </button>
-             </div>
-             <p className="mt-3 text-[10px] text-slate-500 text-center max-w-md">
-               <strong>Note:</strong> This is a coding test built with the genius Gemini Coding Assistant! Many advanced features shown here are UI placebos. True UA spoofing and complete control of Chrome on Android actually require <strong>ADB commands</strong> (which mostly make temporary changes in RAM). Most importantly, on Android without root, the <code>Local State</code> file is the real control center for Chrome-based browsers (especially since Developer Tools are not available in the mobile browser). You must modify this file alongside utilizing internal <code>chrome://</code> URLs, flags, and debug menus. <br/><br/>
-               <em>Stay tuned: This project will soon pivot to share real AI tips, tricks, and special offers!</em>
-             </p>
+            <ClipboardButton scriptContent={generatedScript} />
           </div>
 
           <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel11ProXL ? "Mozilla/5.0 (Linux; Android 17; Pixel 11 Pro XL Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />

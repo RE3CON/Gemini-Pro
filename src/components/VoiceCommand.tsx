@@ -4,16 +4,20 @@ import { Mic, MicOff } from 'lucide-react';
 export const VoiceCommand: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
 
-  useEffect(() => {
-    // Request microphone permission on mount
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(() => console.log('Microphone access granted'))
-      .catch(err => console.error('Microphone access denied', err));
-  }, []);
-
-  const toggleListening = () => {
-    setIsListening(!isListening);
-    // Add speech recognition logic here
+  const toggleListening = async () => {
+    if (!isListening) {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        setIsListening(true);
+        // Add speech recognition logic here
+      } catch (err) {
+        console.error('Microphone access denied', err);
+        alert('Microphone access denied. Please enable it in your browser settings.');
+      }
+    } else {
+      setIsListening(false);
+      // Stop speech recognition logic here
+    }
   };
 
   return (
