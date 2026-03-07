@@ -1,5 +1,9 @@
 # Quick-Start Setup Guide
 
+## 💡 How to start a new session
+When starting a new conversation, please instruct me:
+> "Read the setup cheat sheet and guide me through the steps. Here is the repository URL: [INSERT URL HERE]"
+
 This guide streamlines the setup process for new sessions.
 
 ## 1. Generate GitHub Personal Access Token (PAT)
