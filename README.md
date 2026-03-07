@@ -30,7 +30,7 @@ Sovereign fingerprint protection for Google AI & LLM environments. Merged Golden
 This project provides an advanced Tampermonkey/Violentmonkey script designed to harden your browser fingerprint against tracking and behavioral analysis, specifically tailored for Google's AI environments (Gemini, AI Studio, NotebookLM, etc.). 
 
 It includes active modules for:
-- **Hardware Spoofing:** Simulates a Google Pixel 11 Pro XL / Tensor G6 / 16GB environment.
+- **Hardware Spoofing:** Simulates a Google Pixel 11 Pro XL / Tensor G6 / 16GB environment. *Note: This is largely a placebo. True hardware spoofing requires ADB commands, root access, and the ability to modify internal browser files like `Local State` and `chrome://flags`, which cannot be achieved via a standard UserScript.*
 - **Network Stealth:** Spoofs 4G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
 - **Masking Engine:** Protects spoofed functions from `.toString()` detection.
 - **Jitter Logic:** Injects noise into timing APIs (`performance.now`) and `requestAnimationFrame`.

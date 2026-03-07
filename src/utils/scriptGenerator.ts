@@ -180,7 +180,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     // --- Pixel 11 Pro XL / Tensor G6 (TARGET SPOOF) ---
     'gemini_enable_android_17_features': config.spoofPixel11ProXL ? 'true' : 'false',
     'gemini_enable_pixel_exclusive_features': config.spoofPixel11ProXL ? 'true' : 'false',
-    'gemini_enable_tensor_g6_optimizations': config.enableTensorG6 ? 'true' : 'false',
+    'gemini_enable_tensor_g6_optimizations': (config.enableTensorG6 || config.spoofPixel11ProXL) ? 'true' : 'false',
     
     // --- Gemini 3.0 (2026 PREVIEW) ---
     'gemini_enable_flash_3_0_preview': config.enableGemini3_0Flash ? 'true' : 'false',
@@ -220,16 +220,16 @@ export const generateUserScript = (config: ScriptConfig): string => {
     'gemini_enable_copilot_bridge': config.enableCoPilotBridge ? 'true' : 'false',
     
     // --- Singularity V5 Merged Flags ---
-    'gemini_enable_neural_core_offload': config.enableNeuralCore ? 'true' : 'false',
-    'gemini_enable_nano_v2': config.enableNeuralCore ? 'true' : 'false',
+    'gemini_enable_neural_core_offload': (config.enableNeuralCore || config.spoofPixel11ProXL) ? 'true' : 'false',
+    'gemini_enable_nano_v2': (config.enableNeuralCore || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_thinking_level': config.enableUnlimitedBudget ? 'singularity_max' : 'standard',
     'gemini_enable_export_multicloud_pro': 'true',
     
     // --- NANO BANANA 3 & EXPERIMENTAL MODELS (2026 UPDATE) ---
-    'gemini_enable_nano_banana_3': config.enableHighFidelityMedia ? 'true' : 'false',
+    'gemini_enable_nano_banana_3': (config.enableHighFidelityMedia || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_enable_nano_banana_ultra': 'true', // Keeping for compatibility
-    'gemini_enable_nano_banana_4k': config.enableHighFidelityMedia ? 'true' : 'false',
-    'gemini_enable_4k_image_generation': config.enableHighFidelityMedia ? 'true' : 'false',
+    'gemini_enable_nano_banana_4k': (config.enableHighFidelityMedia || config.spoofPixel11ProXL) ? 'true' : 'false',
+    'gemini_enable_4k_image_generation': (config.enableHighFidelityMedia || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_enable_experimental_models': config.enableExperimentalModels ? 'true' : 'false',
     'gemini_enable_experimental_models_all': config.enableExperimentalModels ? 'true' : 'false',
     'gemini_enable_internal_models': config.enableExperimentalModels ? 'true' : 'false',
