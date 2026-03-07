@@ -684,13 +684,164 @@ const GitHubIssues: React.FC = () => {
 const App: React.FC = () => {
   const [config, setConfig] = useState<ScriptConfig>(INITIAL_CONFIG);
   const [autoCopyEnabled, setAutoCopyEnabled] = useState(false);
+  const [serverInfo, setServerInfo] = useState<{nodeVersion: string, serverType: string, startTime: number} | null>(null);
+  const [generationTime, setGenerationTime] = useState(0);
+  const [isPWA, setIsPWA] = useState(false);
+  const [androidVersion, setAndroidVersion] = useState<string | null>(null);
+  const [deviceInfo, setDeviceInfo] = useState<{manufacturer: string, model: string, platform: string}>({manufacturer: 'Unknown', model: 'Unknown', platform: 'Unknown'});
+  const [browserInfo, setBrowserInfo] = useState<{name: string, version: string}>({name: 'Unknown', version: 'Unknown'});
+  const [ipInfo, setIpInfo] = useState<{ip: string, city: string, country: string, vpn: boolean, lat: number, lon: number} | null>(null);
+  const [connectionType, setConnectionType] = useState<string>('Unknown');
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [language, setLanguage] = useState<string>(navigator.language);
+  const [theme, setTheme] = useState<'dark' | 'light'>(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const [screenRes, setScreenRes] = useState({ width: screen.width, height: screen.height });
+  const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [timeInfo, setTimeInfo] = useState({ zone: Intl.DateTimeFormat().resolvedOptions().timeZone, local: new Date().toLocaleTimeString() });
+  const [hardware, setHardware] = useState({ memory: (navigator as any).deviceMemory || 'N/A', cores: navigator.hardwareConcurrency || 'N/A', gpu: 'Loading...' });
+
+  useEffect(() => {
+    // GPU Detection
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl) {
+      const debugInfo = (gl as WebGLRenderingContext).getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        const renderer = (gl as WebGLRenderingContext).getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        setHardware(prev => ({ ...prev, gpu: renderer }));
+      } else {
+        setHardware(prev => ({ ...prev, gpu: 'Unknown' }));
+      }
+    } else {
+      setHardware(prev => ({ ...prev, gpu: 'Not supported' }));
+    }
+    // Fetch Server Info
+    fetch('/api/info')
+      .then(res => res.json())
+      .then(data => {
+        setServerInfo(data);
+        setGenerationTime(Date.now() - data.startTime);
+      })
+      .catch(console.error);
+
+    setIsPWA(window.matchMedia('(display-mode: standalone)').matches);
+    
+    // User Agent Client Hints
+    if ((navigator as any).userAgentData) {
+      (navigator as any).userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion'])
+        .then((ua: any) => {
+          const model = ua.model || 'Unknown';
+          const platform = ua.platform || 'Unknown';
+          const userAgentString = navigator.userAgent;
+          
+          let manufacturer = 'Unknown';
+          const mLower = model.toLowerCase();
+          const uLower = userAgentString.toLowerCase();
+          
+          if (mLower.startsWith('sm-') || uLower.includes('samsung')) manufacturer = 'Samsung';
+          else if (mLower.includes('pixel') || uLower.includes('pixel')) manufacturer = 'Google';
+          else if (mLower.includes('iphone') || mLower.includes('ipad') || uLower.includes('iphone')) manufacturer = 'Apple';
+          else if (mLower.includes('redmi') || mLower.includes('mi ') || uLower.includes('xiaomi')) manufacturer = 'Xiaomi';
+          else if (mLower.includes('oneplus') || uLower.includes('oneplus')) manufacturer = 'OnePlus';
+          else if (mLower.includes('moto') || uLower.includes('motorola')) manufacturer = 'Motorola';
+          else if (mLower.includes('sony') || uLower.includes('sony')) manufacturer = 'Sony';
+          
+          setDeviceInfo({ manufacturer, model, platform });
+          if (ua.platformVersion) setAndroidVersion(ua.platformVersion);
+        })
+        .catch(console.error);
+    }
+    
+    // Browser Detection
+    const ua = navigator.userAgent;
+    let name = 'Unknown';
+    let version = 'Unknown';
+    if (ua.includes('Firefox/')) { name = 'Firefox'; version = ua.split('Firefox/')[1]; }
+    else if (ua.includes('Edg/')) { name = 'Edge'; version = ua.split('Edg/')[1]; }
+    else if (ua.includes('Chrome/')) { name = 'Chrome'; version = ua.split('Chrome/')[1].split(' ')[0]; }
+    else if (ua.includes('Safari/')) { name = 'Safari'; version = ua.split('Version/')[1]?.split(' ')[0] || ua.split('Safari/')[1]; }
+    setBrowserInfo({ name, version });
+
+    // Theme & Language
+    const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleThemeChange = (e: MediaQueryListEvent) => setTheme(e.matches ? 'dark' : 'light');
+    themeQuery.addEventListener('change', handleThemeChange);
+    
+    setLanguage(navigator.language);
+    
+    // Online Status
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Connection Type
+    const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    const updateConnection = () => {
+      if (conn) {
+        const type = conn.type || 'Unknown';
+        const effective = conn.effectiveType || 'Unknown';
+        setConnectionType(`${type} (${effective})`);
+      }
+    };
+    if (conn) {
+      updateConnection();
+      conn.addEventListener('change', updateConnection);
+    }
+    
+    // IP Info (VPN/Proxy detection)
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => setIpInfo({
+        ip: data.ip, 
+        city: data.city, 
+        country: data.country_name,
+        vpn: data.proxy || false,
+        lat: data.latitude,
+        lon: data.longitude
+      }))
+      .catch(console.error);
+
+    // Resize & Time
+    const handleResize = () => {
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+      setScreenRes({ width: screen.width, height: screen.height });
+    };
+    window.addEventListener('resize', handleResize);
+    const timeInterval = setInterval(() => {
+        setTimeInfo({ zone: Intl.DateTimeFormat().resolvedOptions().timeZone, local: new Date().toLocaleTimeString() });
+    }, 1000);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      themeQuery.removeEventListener('change', handleThemeChange);
+      clearInterval(timeInterval);
+    };
+  }, []);
+
+  const generatedScript = useMemo(() => {
+    try {
+      return generateUserScript(config);
+    } catch (e) {
+      console.error("Script generation failed", e);
+      return "// Error generating script. Please reset configuration.";
+    }
+  }, [config]);
+
+  useEffect(() => {
+    const start = performance.now();
+    generateUserScript(config);
+    const end = performance.now();
+    setGenerationTime(Math.round(end - start));
+  }, [config]);
 
   useEffect(() => {
     if (autoCopyEnabled) {
-      const script = generateUserScript(config);
-      clipboardService.write(script).catch(console.error);
+      clipboardService.write(generatedScript).catch(console.error);
     }
-  }, [config, autoCopyEnabled]);
+  }, [generatedScript, autoCopyEnabled]);
 
   useEffect(() => {
     // Check clipboard permission
@@ -880,15 +1031,6 @@ const App: React.FC = () => {
     checkVersion();
   }, []);
 
-  const generatedScript = useMemo(() => {
-    try {
-      return generateUserScript(config);
-    } catch (e) {
-      console.error("Script generation failed", e);
-      return "// Error generating script. Please reset configuration.";
-    }
-  }, [config]);
-
   // Generate downloadable UserScript file (.user.js)
   const downloadUrl = useMemo(() => {
     try {
@@ -1044,7 +1186,7 @@ const App: React.FC = () => {
   }, [config]);
 
   return (
-    <div className={`min-h-screen bg-space-950 text-slate-200 p-4 md:p-8 font-sans selection:bg-gold-500/30 ${config.enableLudicrousSpeed ? 'selection:bg-rose-500/30' : ''}`}>
+    <div className={`min-h-screen flex flex-col bg-space-950 text-slate-200 p-4 md:p-8 font-sans selection:bg-gold-500/30 ${config.enableLudicrousSpeed ? 'selection:bg-rose-500/30' : ''}`}>
       {/* Global Toast Notification */}
       <AnimatePresence>
         {toast && (
@@ -1392,7 +1534,7 @@ const App: React.FC = () => {
 
         {/* Preview Column */}
         {activeTab === 'configurator' && (
-        <div className="lg:col-span-6 flex flex-col h-full sticky top-8">
+        <div className="lg:col-span-6 flex flex-col">
           <div className="mb-4 flex items-center justify-between">
              <div className="flex items-center gap-2">
                <Smartphone className="text-slate-400" size={18} />
@@ -1465,7 +1607,31 @@ const App: React.FC = () => {
           <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel11ProXL ? "Mozilla/5.0 (Linux; Android 17; Pixel 11 Pro XL Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />
         </div>
         )}
-
+        <footer className="mt-8 mb-4 mx-4 p-4 border border-slate-700 rounded-xl bg-slate-950 text-[10px] text-slate-400 font-mono shadow-lg">
+          <div className="mb-2 font-bold text-slate-200 uppercase tracking-wider">System & Network Diagnostics</div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-2 gap-x-4">
+            <span><span className="text-slate-500">Device:</span> {deviceInfo.manufacturer} {deviceInfo.model} ({deviceInfo.platform})</span>
+            <span><span className="text-slate-500">Android:</span> {androidVersion || 'N/A'}</span>
+            <span><span className="text-slate-500">Browser:</span> {browserInfo.name} {browserInfo.version}</span>
+            <span><span className="text-slate-500">Status:</span> {isOnline ? '🟢 Online' : '🔴 Offline'}</span>
+            <span><span className="text-slate-500">Conn:</span> {connectionType}</span>
+            <span><span className="text-slate-500">VPN:</span> {ipInfo?.vpn ? 'Yes' : 'No'}</span>
+            <span><span className="text-slate-500">IP:</span> {ipInfo?.ip || 'Loading...'}</span>
+            <span><span className="text-slate-500">Loc:</span> {ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'Loading...'}</span>
+            <span><span className="text-slate-500">Coords:</span> {ipInfo ? `${ipInfo.lat}, ${ipInfo.lon}` : 'Loading...'}</span>
+            <span><span className="text-slate-500">Lang:</span> {language}</span>
+            <span><span className="text-slate-500">Theme:</span> {theme}</span>
+            <span><span className="text-slate-500">HW:</span> {hardware.memory}GB RAM, {hardware.cores} Cores</span>
+            <span><span className="text-slate-500">GPU/Chip:</span> {hardware.gpu}</span>
+            <span><span className="text-slate-500">URL:</span> {window.location.origin}</span>
+            <span><span className="text-slate-500">Engine:</span> Vite</span>
+            <span><span className="text-slate-500">Server:</span> Nginx</span>
+            <span><span className="text-slate-500">Node:</span> {serverInfo?.nodeVersion || 'Loading...'}</span>
+            <span><span className="text-slate-500">Env:</span> {import.meta.env.MODE}</span>
+            <span><span className="text-slate-500">Zone:</span> {timeInfo.zone}</span>
+            <span><span className="text-slate-500">ExecTime:</span> {generationTime}ms</span>
+          </div>
+        </footer>
       </div>
     </div>
   );

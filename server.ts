@@ -41,6 +41,15 @@ async function startServer() {
     apiLimiter(req, res, next);
   });
 
+  // API routes
+  app.get("/api/info", (req, res) => {
+    res.json({
+      nodeVersion: process.version,
+      serverType: "Nginx",
+      startTime: Date.now()
+    });
+  });
+
   // Samsung Integration Routes
   app.post("/api/samsung/dex", async (req, res) => {
     const { enabled } = req.body;
