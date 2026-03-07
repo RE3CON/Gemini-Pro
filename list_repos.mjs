@@ -1,20 +1,25 @@
 import { Octokit } from "@octokit/rest";
 
 const octokit = new Octokit({ auth: 'ghp_***MASKED***' });
-const owner = 'RE3CON';
 
 async function listRepos() {
   try {
-    const repos = await octokit.repos.listForUser({
-      username: owner
+    const { data } = await octokit.repos.listForAuthenticatedUser({
+      per_page: 100
     });
     
-    console.log(`Repositories for ${owner}:`);
-    repos.data.forEach(repo => {
-      console.log(`- ${repo.name} (Open Issues: ${repo.open_issues_count})`);
-    });
+    const repoNames = data.map(repo => repo.full_name);
+    console.log("Repositories:", repoNames);
+    
+    const geminiAIRepo = data.find(repo => repo.name === 'Gemini-AI');
+    if (geminiAIRepo) {
+        console.log("Found Gemini-AI:", geminiAIRepo.full_name);
+    } else {
+        console.log("Gemini-AI not found.");
+    }
+    
   } catch (error) {
-    console.error(`Error:`, error.message);
+    console.error(`Error listing repos:`, error.message);
   }
 }
 

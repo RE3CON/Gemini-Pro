@@ -6,6 +6,8 @@ import path from "path";
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import { rateLimit } from "express-rate-limit";
+import { WebSocketServer } from 'ws';
+import { SamsungService } from "./src/services/samsungService";
 
 dotenv.config();
 
@@ -33,6 +35,19 @@ async function startServer() {
 
   app.use(express.json());
   app.use("/api/", apiLimiter);
+
+  // Samsung Integration Routes
+  app.post("/api/samsung/dex", async (req, res) => {
+    const { enabled } = req.body;
+    const result = await SamsungService.setDeXMode(enabled);
+    res.json(result);
+  });
+
+  app.post("/api/samsung/battery", async (req, res) => {
+    const { enabled } = req.body;
+    const result = await SamsungService.setBatteryOptimization(enabled);
+    res.json(result);
+  });
 
   // 2. Aggressive Caching (Server-side)
   let cachedLogoData: string | null = null;
@@ -318,6 +333,19 @@ async function startServer() {
     console.log(`Server running on http://localhost:${PORT}`);
   });
   
+  // WebSocket Server
+  const wss = new WebSocketServer({ server });
+  wss.on('connection', (ws) => {
+    ws.on('message', (data) => {
+      // Broadcast to all other clients
+      wss.clients.forEach((client) => {
+        if (client !== ws && client.readyState === 1) {
+          client.send(data);
+        }
+      });
+    });
+  });
+
   // Increase timeout to 10 minutes for large GitHub pushes
   server.timeout = 600000;
 }
