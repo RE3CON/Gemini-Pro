@@ -35,15 +35,11 @@ jobs:
         run: |
           cat << 'EOF' > extract.js
           import fs from 'fs';
-          const appCode = fs.readFileSync('./src/App.tsx', 'utf8');
-          const match = appCode.match(/const MERGED_SCRIPT = `([\s\S]*?)`;/);
-          if (match && match[1]) {
-            fs.writeFileSync('./google-ai-identity.user.js', match[1]);
-            console.log('Successfully extracted UserScript');
-          } else {
-            console.error('Failed to extract script');
-            process.exit(1);
-          }
+          import { generateUserScript } from './src/utils/scriptGenerator';
+          import { INITIAL_CONFIG } from './src/App';
+          const script = generateUserScript(INITIAL_CONFIG);
+          fs.writeFileSync('./google-ai-identity.user.js', script);
+          console.log('Successfully extracted UserScript');
           EOF
           npx tsx extract.js
 

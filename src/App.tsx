@@ -17,7 +17,7 @@ import { generateUserScript } from './utils/scriptGenerator';
 import { ScriptConfig } from './types';
 
 // --- INITIAL CONFIGURATION (FULL RESTORATION) ---
-const INITIAL_CONFIG: ScriptConfig = {
+export const INITIAL_CONFIG: ScriptConfig = {
   version: '27.9.23-FULL-RESTORE',
   
   // --- RECOMMENDED DEFAULTS ---
@@ -274,6 +274,9 @@ const INITIAL_CONFIG: ScriptConfig = {
   enableSafetyOverride: false,
   enableFutureLabs: false,
 };
+
+const MERGED_SCRIPT = `${generateUserScript(INITIAL_CONFIG)}`;
+
 
 // --- SECTION DEFINITIONS (FULL UI RESTORED) ---
 const SECTION_DEFINITIONS = [
