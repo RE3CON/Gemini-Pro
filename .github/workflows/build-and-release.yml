@@ -74,7 +74,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           npm config set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
-          npm version 12.5.${{ github.run_number }}-${{ github.sha.substring(0,7) }} --no-git-tag-version
+          npm pkg set version=12.5.${{ github.run_number }}-${{ github.sha.substring(0,7) }}
           npm publish --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
