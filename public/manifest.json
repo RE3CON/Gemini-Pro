@@ -1,0 +1,17 @@
+{
+  "name": "AI Identity Hardener",
+  "short_name": "Hardener",
+  "description": "Sovereign fingerprint protection for Google AI & LLM environments.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E6E6E6",
+  "theme_color": "#FF4444",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
