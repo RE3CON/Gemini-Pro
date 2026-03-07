@@ -1452,7 +1452,7 @@ const App: React.FC = () => {
                   <span>Push to GitHub</span>
                 </button>
               </div>
-              <p className="mt-3 text-[10px] text-slate-500 text-center max-w-md">
+              <p className="mt-3 text-[10px] text-orange-600 text-center max-w-md">
                 <strong>Note:</strong> This is a coding test built with the genius Gemini Coding Assistant! Many advanced features shown here are UI placebos. True UA spoofing and complete control of Chrome on Android actually require <strong>ADB commands</strong> (which mostly make temporary changes in RAM). Most importantly, on Android without root, the <code>Local State</code> file is the real control center for Chrome-based browsers (especially since Developer Tools are not available in the mobile browser). You must modify this file alongside utilizing internal <code>chrome://</code> URLs, flags, and debug menus. <br/><br/>
                 <em>Stay tuned: This project will soon pivot to share real AI tips, tricks, and special offers!</em>
               </p>
