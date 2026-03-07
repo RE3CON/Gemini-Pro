@@ -1,0 +1,79 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Web App
+        run: npm run build
+
+      - name: Extract UserScript
+        run: |
+          cat << 'EOF' > extract.js
+          import fs from 'fs';
+          import { generateUserScript } from './src/utils/scriptGenerator';
+          import { INITIAL_CONFIG } from './src/App';
+          const script = generateUserScript(INITIAL_CONFIG);
+          fs.writeFileSync('./google-ai-identity.user.js', script);
+          console.log('Successfully extracted UserScript');
+          EOF
+          npx tsx extract.js
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app-build
+          path: dist/
+
+      - name: Upload UserScript Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: userscript
+          path: google-ai-identity.user.js
+
+      - name: Zip Web App
+        run: zip -r web-app.zip dist/
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v12.5.${{ github.run_number }}
+          name: Release v12.5.${{ github.run_number }}
+          files: |
+            google-ai-identity.user.js
+            web-app.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          commit_message: "Deploy web app to GitHub Pages [skip ci]"

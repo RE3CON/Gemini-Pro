@@ -1,5 +1,5 @@
 {
-  "name": "Remix: Gemini IO: Accessibility \u0026 Productivity Bridge",
-  "description": "An enhanced interface for Gemini designed to reduce keyboard usage and typing fatigue. Bridges native Android intents, file systems, and code exports for developers and users with limited mobility.",
-  "requestFramePermissions": []
+  "name": "Google AI Identity Hardener",
+  "description": "A tool to generate and manage the ultimate Chrome fingerprint hardening script for Google AI services.",
+  "requestFramePermissions": ["microphone", "clipboard-read", "clipboard-write"]
 }
