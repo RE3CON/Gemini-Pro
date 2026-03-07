@@ -27,7 +27,7 @@ Sovereign fingerprint protection for Google AI & LLM environments. Merged Golden
 
 ## Overview
 
-This project provides an advanced Tampermonkey/Violentmonkey script designed to harden your browser fingerprint against tracking and behavioral analysis, specifically tailored for Google's AI environments (Gemini, AI Studio, NotebookLM, etc.). 
+This project provides an advanced Tampermonkey/Violentmonkey script designed to harden your browser fingerprint against tracking and behavioral analysis, specifically tailored for Google's AI environments (Gemini, AI Studio, NotebookLM, etc.). It also supports **AdGuard for Android**, which includes a built-in UserScript manager. For detailed installation instructions, please refer to our [Wiki Installation Guide](https://github.com/RE3CON/Gemini-AI/wiki/Installation).
 
 It includes active modules for:
 - **Hardware Spoofing:** Simulates a Google Pixel 11 Pro XL / Tensor G6 / 16GB environment. *Note: This is largely a placebo. True hardware spoofing requires ADB commands, root access, and the ability to modify internal browser files like `chrome://local-state/`, as well as accessing `chrome://chrome-urls/` and `chrome://flags/`, which cannot be achieved via a standard UserScript.*
