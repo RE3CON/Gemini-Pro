@@ -18,7 +18,7 @@ async function startServer() {
   // Trust the first proxy (nginx)
   app.set('trust proxy', 1);
 
-  // Rate limiting for API routes
+  // Rate limiting for API routes (excluding logo generation)
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     limit: 100, // Limit each IP to 100 requests per windowMs
@@ -34,7 +34,12 @@ async function startServer() {
   });
 
   app.use(express.json());
-  app.use("/api/", apiLimiter);
+  app.use("/api/", (req, res, next) => {
+    if (req.path === "/generate-logo") {
+      return next();
+    }
+    apiLimiter(req, res, next);
+  });
 
   // Samsung Integration Routes
   app.post("/api/samsung/dex", async (req, res) => {
@@ -73,7 +78,7 @@ async function startServer() {
       // 1. Use Flash for Everything Possible: Reverted to 2.5 flash image as 3.1 requires user-provided API key
       // 3. Minimize Context Windows: Optimized the prompt to be highly concise and token-efficient
       let response;
-      let retries = 3;
+      let retries = 5;
       while (retries > 0) {
         try {
           response = await ai.models.generateContent({
@@ -91,7 +96,7 @@ async function startServer() {
           retries--;
           if (retries === 0) throw e;
           console.warn(`Logo generation failed, retrying... (${retries} attempts left)`);
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
       }
 
