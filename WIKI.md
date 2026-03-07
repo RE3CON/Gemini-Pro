@@ -2,6 +2,8 @@
 
 Welcome to the Gemini-AI Wiki! This is the central repository for detailed documentation regarding the project.
 
+**Latest Update (2026-03-07):** Hardened the native bridge service (`samsungBridge.ts`) to prevent `ReferenceError: window is not defined` in Node.js build environments, ensuring reliable CI/CD builds.
+
 ## Table of Contents
 
 1. [Overview](#overview)

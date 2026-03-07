@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google AI Identity Hardener
 // @namespace    http://tampermonkey.net/
-// @version      12.5.3
+// @version      12.5.4
 // @description  Ultimate Chrome fingerprint hardening for Google AI services - Full Sovereign Hybrid
 // @author       Anonymous
 // @license      MIT

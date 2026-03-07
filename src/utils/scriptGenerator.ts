@@ -180,7 +180,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     // --- Pixel 11 Pro XL / Tensor G6 (TARGET SPOOF) ---
     'gemini_enable_android_17_features': config.spoofPixel11ProXL ? 'true' : 'false',
     'gemini_enable_pixel_exclusive_features': config.spoofPixel11ProXL ? 'true' : 'false',
-    'gemini_enable_tensor_g6_optimizations': config.enableTensorG6 ? 'true' : 'false',
+    'gemini_enable_tensor_g6_optimizations': (config.enableTensorG6 || config.spoofPixel11ProXL) ? 'true' : 'false',
     
     // --- Gemini 3.0 (2026 PREVIEW) ---
     'gemini_enable_flash_3_0_preview': config.enableGemini3_0Flash ? 'true' : 'false',
@@ -220,16 +220,16 @@ export const generateUserScript = (config: ScriptConfig): string => {
     'gemini_enable_copilot_bridge': config.enableCoPilotBridge ? 'true' : 'false',
     
     // --- Singularity V5 Merged Flags ---
-    'gemini_enable_neural_core_offload': config.enableNeuralCore ? 'true' : 'false',
-    'gemini_enable_nano_v2': config.enableNeuralCore ? 'true' : 'false',
+    'gemini_enable_neural_core_offload': (config.enableNeuralCore || config.spoofPixel11ProXL) ? 'true' : 'false',
+    'gemini_enable_nano_v2': (config.enableNeuralCore || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_thinking_level': config.enableUnlimitedBudget ? 'singularity_max' : 'standard',
     'gemini_enable_export_multicloud_pro': 'true',
     
     // --- NANO BANANA 3 & EXPERIMENTAL MODELS (2026 UPDATE) ---
-    'gemini_enable_nano_banana_3': config.enableHighFidelityMedia ? 'true' : 'false',
+    'gemini_enable_nano_banana_3': (config.enableHighFidelityMedia || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_enable_nano_banana_ultra': 'true', // Keeping for compatibility
-    'gemini_enable_nano_banana_4k': config.enableHighFidelityMedia ? 'true' : 'false',
-    'gemini_enable_4k_image_generation': config.enableHighFidelityMedia ? 'true' : 'false',
+    'gemini_enable_nano_banana_4k': (config.enableHighFidelityMedia || config.spoofPixel11ProXL) ? 'true' : 'false',
+    'gemini_enable_4k_image_generation': (config.enableHighFidelityMedia || config.spoofPixel11ProXL) ? 'true' : 'false',
     'gemini_enable_experimental_models': config.enableExperimentalModels ? 'true' : 'false',
     'gemini_enable_experimental_models_all': config.enableExperimentalModels ? 'true' : 'false',
     'gemini_enable_internal_models': config.enableExperimentalModels ? 'true' : 'false',
@@ -535,7 +535,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     };
     
     // --- 0. ACCESSIBILITY MODE ---
-    if (window.Android) { console.log("Native WebView Bridge Detected - Accessibility Mode Optimized"); }
+    if (typeof window !== 'undefined' && window.Android) { console.log("Native WebView Bridge Detected - Accessibility Mode Optimized"); }
 
     // --- 1. SOVEREIGN CONSTANTS (v5 RESTORED) ---
     const REPLIT_ID = 'recon_master_dev';
@@ -1105,18 +1105,18 @@ ${flagsString}
             Object.defineProperty(navigator, 'webdriver', { get: () => undefined, configurable: true });
             
             ${config.enableScreenSpoof ? `
-            // DEEP SCREEN SPOOF
-            const screenMock = { width: 1280, height: 2856, availWidth: 1280, availHeight: 2828, colorDepth: 32, pixelDepth: 32 };
+            // DEEP SCREEN SPOOF (Pixel 11 Pro XL)
+            const screenMock = { width: 1440, height: 3200, availWidth: 1440, availHeight: 3200, colorDepth: 32, pixelDepth: 32 };
             Object.defineProperty(window, 'screen', { value: screenMock, writable: false });
-            Object.defineProperty(window, 'innerWidth', { get: () => 1280 / 3.5 });
-            Object.defineProperty(window, 'innerHeight', { get: () => 2828 / 3.5 });
-            Object.defineProperty(window, 'outerWidth', { get: () => 1280 / 3.5 });
-            Object.defineProperty(window, 'outerHeight', { get: () => 2828 / 3.5 });
+            Object.defineProperty(window, 'innerWidth', { get: () => 411 });
+            Object.defineProperty(window, 'innerHeight', { get: () => 914 });
+            Object.defineProperty(window, 'outerWidth', { get: () => 411 });
+            Object.defineProperty(window, 'outerHeight', { get: () => 914 });
             Object.defineProperty(window, 'devicePixelRatio', { get: () => 3.5 }); 
             
             if (window.visualViewport) {
-                Object.defineProperty(window.visualViewport, 'width', { get: () => 1280 / 3.5 });
-                Object.defineProperty(window.visualViewport, 'height', { get: () => 2828 / 3.5 });
+                Object.defineProperty(window.visualViewport, 'width', { get: () => 411 });
+                Object.defineProperty(window.visualViewport, 'height', { get: () => 914 });
             }
             // Block resize leakage
             window.addEventListener('resize', (e) => { e.stopImmediatePropagation(); }, true);

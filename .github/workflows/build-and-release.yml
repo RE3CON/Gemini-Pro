@@ -29,19 +29,21 @@ jobs:
         run: npm install
 
       - name: Build Web App
-        run: npm run build
+        run: npx vite build
 
       - name: Extract UserScript
         run: |
-          cat << 'EOF' > extract.js
+          cat << 'EOF' > extract.mjs
+          global.window = {};
+          global.navigator = { clipboard: { writeText: () => {} } };
           import fs from 'fs';
-          import { generateUserScript } from './src/utils/scriptGenerator';
-          import { INITIAL_CONFIG } from './src/App';
+          import { generateUserScript } from './src/utils/scriptGenerator.ts';
+          import { INITIAL_CONFIG } from './src/App.tsx';
           const script = generateUserScript(INITIAL_CONFIG);
           fs.writeFileSync('./google-ai-identity.user.js', script);
           console.log('Successfully extracted UserScript');
           EOF
-          npx tsx extract.js
+          npx tsx extract.mjs
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4

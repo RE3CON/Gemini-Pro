@@ -691,6 +691,28 @@ const App: React.FC = () => {
   }, [config, autoCopyEnabled]);
 
   useEffect(() => {
+    // Request microphone permission on startup
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        console.log('Microphone access granted');
+        // Stop the tracks immediately as we don't need the stream yet
+        stream.getTracks().forEach(track => track.stop());
+      })
+      .catch(err => {
+        console.error('Microphone access denied or not supported:', err);
+      });
+
+    // Check clipboard permission
+    navigator.permissions.query({ name: 'clipboard-read' as PermissionName })
+      .then(result => {
+        console.log('Clipboard read permission state:', result.state);
+      })
+      .catch(err => {
+        console.error('Clipboard permission query not supported:', err);
+      });
+  }, []);
+
+  useEffect(() => {
     addSocketListener((data) => {
       if (data.type === 'CONFIG_SYNC') {
         setConfig(data.config);
@@ -732,10 +754,15 @@ const App: React.FC = () => {
     setToast({ id, type, message });
     setTimeout(() => {
       setToast((current) => (current?.id === id ? null : current));
-    }, 4000);
+    }, 10000);
   };
 
   const handleGenerateLogo = async () => {
+    // Check for API key
+    if (window.aistudio && !(await window.aistudio.hasSelectedApiKey())) {
+      await window.aistudio.openSelectKey();
+    }
+
     // 2. Aggressive Caching (Client-side)
     const cachedLogo = localStorage.getItem('re3con_cached_logo');
     if (cachedLogo) {
@@ -762,10 +789,20 @@ const App: React.FC = () => {
         localStorage.setItem('re3con_cached_logo', newLogoUrl); // Save to cache
         showToast('success', 'Logo generated successfully!');
       } else {
-        showToast('error', data.error || 'Failed to generate logo.');
+        if (response.status === 401 && window.aistudio) {
+          await window.aistudio.openSelectKey();
+        }
+        if (response.status === 429) {
+          showToast('error', 'Quota exceeded for this project. Please select a different project in the API key selection dialog.');
+        } else {
+          showToast('error', data.details || data.error || 'Failed to generate logo.');
+        }
       }
     } catch (error: any) {
       console.error('Error generating logo:', error);
+      if (error.message && error.message.includes("Requested entity was not found.") && window.aistudio) {
+        await window.aistudio.openSelectKey();
+      }
       showToast('error', 'Network error during logo generation.');
     } finally {
       setIsGeneratingLogo(false);
@@ -1001,7 +1038,6 @@ const App: React.FC = () => {
     
     // MODELS
     if (config.enableGemini3_0Pro) list.push("✨ GEMINI 3.0: 2026 Preview Models selected.");
-    if (config.enableGemini3_0Pro && config.enableGemini2_0Pro) list.push("��️ PRIORITY: Gemini 3.0 will take precedence over Gemini 2.0 settings.");
 
     // HYBRID
     if (config.spoofPixel11ProXL && config.enableSamsungEcosystem) list.push("📱 HYBRID IDENTITY: Pixel 11 Pro XL + S24 Ultra Fusion.");

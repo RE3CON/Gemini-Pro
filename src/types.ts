@@ -274,3 +274,12 @@ export interface FeatureFlag {
   label: string;
   description: string;
 }
+
+declare global {
+  interface Window {
+    aistudio: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
+  }
+}

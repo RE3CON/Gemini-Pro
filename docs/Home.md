@@ -2,14 +2,20 @@
 
 The **AI Identity Hardener** is a sovereign fingerprint protection tool specifically designed for Google AI and LLM environments.
 
-## Core Philosophy
-In an era of increasing behavioral analysis and fingerprinting, maintaining digital sovereignty is crucial. This project provides a "Golden Master" architecture that merges multiple hardening techniques into a single, high-performance script.
+## Prerequisites
 
-## Key Modules
-- **Hardware Spoofing:** Simulates high-end hardware to blend in with professional workstations.
-- **Network Stealth:** Enforces privacy controls and prevents IP leaks.
-- **Masking Engine:** Protects the script itself from detection.
-- **Jitter Logic:** Injects noise into timing APIs to break behavioral tracking.
+You need a userscript manager installed in your browser:
+
+- **AdGuard Android**: It has a UserScript manager under **Extensions -> Erweiterungen**. This allows for the addition of userscripts and user styles to extend AdGuard's functionality.
+- **Tampermonkey** (Recommended)
+- **Violentmonkey**
+
+## Installation and Updates
+
+To install the latest version of the script, use the following URL for the latest reproduction build:
+
+[Install/Update Latest Reproduction Build](INSERT_LATEST_REPRODUCTION_BUILD_URL_HERE)
 
 ## Getting Started
+
 To get started, check out the [Installation](Installation) guide.

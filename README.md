@@ -23,12 +23,31 @@
 
 Sovereign fingerprint protection for Google AI & LLM environments. Merged Golden Master architecture with zero-blindspot hardening.
 
+**Latest Update (2026-03-07):** Re-enabled microphone and clipboard permissions with startup prompts, and implemented a retry mechanism for logo generation to handle transient network errors.
+
 ## Overview
 
 This project provides an advanced Tampermonkey/Violentmonkey script designed to harden your browser fingerprint against tracking and behavioral analysis, specifically tailored for Google's AI environments (Gemini, AI Studio, NotebookLM, etc.). 
 
 It includes active modules for:
-- **Hardware Spoofing:** Simulates an RTX 3080 / 16-Core / 8GB environment.
+- **Hardware Spoofing:** Simulates a Google Pixel 11 Pro XL / Tensor G6 / 16GB environment. *Note: This is largely a placebo. True hardware spoofing requires ADB commands, root access, and the ability to modify internal browser files like `chrome://local-state/`, as well as accessing `chrome://chrome-urls/` and `chrome://flags/`, which cannot be achieved via a standard UserScript.*
+
+## Active Chrome Flags
+
+The following flags are currently enabled in the environment:
+
+```json
+{
+  "enabled_labs_experiments": {
+    "metadata": [ "user_controlled", "user_modifiable" ],
+    "value": [ "aim-use-pec-api@1", "align-pdf-default-print-settings-with-html@1", "android-adpf-efficiency-mode@3", "android-appearance-settings@1", "android-bookmark-bar-fast-follow@1", "android-bookmark-bar@1", "android-composeplate@2", "android-context-menu-duplicate-tabs@1", "android-data-importer-service@1", "android-window-management-web-api@1", "autofill-enable-ai-based-amount-extraction@1", "background-compact@1", "background-resource-fetch@1", "bookmark-pane-android@1", "canvas-2d-layers", "canvas-draw-element@1", "chrome-finds-internals@1", "chrome-finds@1", "data-sharing@1", "default-angle-vulkan@1", "devtools-live-edit@1", "devtools-privacy-ui@1", "devtools-protocol-monitor@1", "document-patching@1", "enable-android-window-controls-overlay@1", "enable-experimental-web-platform-features", "enable-experimental-webassembly-features", "enable-experimental-webassembly-shared-everything@1", "enable-experimental-webassembly-stack-switching@1", "enable-force-dark@1", "enable-future-v8-vm-features@1", "enable-gpu-rasterization@1", "enable-javascript-harmony", "enable-jxl-image-format@1", "enable-parallel-downloading@1", "enable-quic@1", "enable-task-manager-clank@1", "enable-tls13-early-data@1", "enable-twa-origin-display@1", "enable-unsafe-webgpu", "enable-vulkan@1", "enable-web-payments-experimental-features@1", "enable-webassembly-baseline@1", "enable-webassembly-lazy-compilation@1", "enable-webassembly-tiering@1", "enable-webgl-developer-extensions", "enable-webgl-draft-extensions", "enable-webgpu-developer-features", "enable-zero-copy@1", "experimental-web-machine-learning-neural-network@1", "feed-audio-overviews@1", "fluid-resize@1", "gemini-antiscam-protections-metrics-only@1", "glic-actor@1", "glic-capture-region@1", "glic@1", "happy-eyeballs-v3@1", "history-pane-android@1", "ignore-gpu-blocklist", "incognito-screenshot@1", "inline-pdf-v2@1", "input-on-viz@1", "local-network-access-check-split-permissions@1", "local-network-access-check-webrtc@1", "local-network-access-check-websockets@1", "local-network-access-check-webtransport@1", "local-network-access-check@1", "most-visited-tiles-customization@1", "new-tab-page-customization-for-mvt@1", "new-tab-page-customization-v2@1", "ntp-mvc-refactor@1", "ntp-simplification@1", "page-content-cache@1", "permissions-ai-p92@1", "permissions-ai-v4@1", "reader-mode-blur-transition-animation@1", "reader-mode-distill-in-app@1", "reader-mode-heuristics@2", "reader-mode-improvements@2", "reader-mode-support-new-fonts@1", "reader-mode-toggle-links@1", "reader-mode-use-readability@2", "right-edge-goes-forward-gesture-nav@1", "route-matching@1", "running-compact@1", "safety-hub-local-passwords-module@1", "safety-hub-unified-passwords-module@1", "search-in-cct@1", "search-in-settings@1", "skia-graphite@1", "submenus-in-app-menu@1", "taiyaki@1", "temporary-unexpire-flags-m145@1", "temporary-unexpire-flags-m146@1", "trees-in-viz@1", "vulkan-from-angle@1", "web-machine-learning-neural-network@1", "webrtc-hw-decoding@1", "webrtc-hw-encoding@1", "webrtc-pqc-for-dtls@1", "webtransport-developer-mode", "xslt@1" ]
+  },
+  "enabled_labs_experiments_origin_lists": {
+    "metadata": [ "default", "user_modifiable" ],
+    "value": {}
+  }
+}
+```
 - **Network Stealth:** Spoofs 4G connections, enforces Global Privacy Control (GPC), and locks WebRTC to prevent IP leaks.
 - **Masking Engine:** Protects spoofed functions from `.toString()` detection.
 - **Jitter Logic:** Injects noise into timing APIs (`performance.now`) and `requestAnimationFrame`.
