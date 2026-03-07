@@ -13,40 +13,20 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  // Trust the first proxy (nginx)
-  app.set('trust proxy', 1);
-
   // Rate limiting for API routes
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     limit: 100, // Limit each IP to 100 requests per windowMs
     standardHeaders: 'draft-7',
     legacyHeaders: false,
-    message: { error: "Too many requests, please try again later." },
-    validate: {
-      xForwardedForHeader: false,
-      trustProxy: false,
-      forwardedHeader: false,
-      default: true
-    }
+    message: { error: "Too many requests, please try again later." }
   });
 
   app.use(express.json());
   app.use("/api/", apiLimiter);
 
-  // 2. Aggressive Caching (Server-side)
-  let cachedLogoData: string | null = null;
-
   // Logo Generation Route
   app.post("/api/generate-logo", async (req, res) => {
-    const { forceRefresh } = req.body || {};
-
-    // 2. Aggressive Caching: Return cached logo if it exists and we aren't forcing a refresh
-    if (cachedLogoData && !forceRefresh) {
-      console.log("Returning cached logo to save API limits.");
-      return res.json({ success: true, imageData: cachedLogoData, cached: true });
-    }
-
     try {
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
@@ -54,25 +34,21 @@ async function startServer() {
       }
 
       const ai = new GoogleGenAI({ apiKey });
-      
-      // 1. Use Flash for Everything Possible: Reverted to 2.5 flash image as 3.1 requires user-provided API key
-      // 3. Minimize Context Windows: Optimized the prompt to be highly concise and token-efficient
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {
           parts: [
             {
-              text: 'Cybersecurity app logo. Vector art, neon gradients, futuristic shield, no text, transparent background.',
+              text: 'A highly unique, colorful, and vibrant logo for a cybersecurity application. The design must be completely original, focusing heavily on digital security, privacy, and protection. Incorporate abstract security elements like a futuristic shield, cryptographic keys, or a secure vault, combined with vibrant, multi-colored neon gradients. Vector art style, clean edges, isolated on a transparent background. No text, no words.',
             },
           ],
-        }
+        },
       });
 
       let found = false;
       for (const part of response.candidates?.[0]?.content?.parts || []) {
         if (part.inlineData) {
-          cachedLogoData = part.inlineData.data; // Save to cache
-          res.json({ success: true, imageData: cachedLogoData, cached: false });
+          res.json({ success: true, imageData: part.inlineData.data });
           found = true;
           break;
         }
@@ -82,7 +58,7 @@ async function startServer() {
         res.status(500).json({ error: "Failed to generate image data from AI model." });
       }
     } catch (error: any) {
-      console.error("Logo Generation Error:", error);
+      console.error("Logo Generation Error:", error.message || error);
       res.status(500).json({ error: "Server error during logo generation.", details: error.message });
     }
   });
@@ -161,43 +137,16 @@ async function startServer() {
           const fullPath = path.join(dir, entry.name);
           const relativePath = path.join(base, entry.name).replace(/\\/g, '/');
 
-          // Skip node_modules, .git, dist, and other unnecessary/large directories
-          if ([
-            "node_modules", ".git", "dist", ".next", 
-            "Gemini-Pro", "Gemini-Pro-Clone", ".npm", ".cache"
-          ].includes(entry.name)) continue;
-          
-          // CRITICAL: Skip environment variables and secrets
-          if (entry.name === ".env" || entry.name === ".env.local" || entry.name.includes("secret") || entry.name.endsWith(".pem")) {
-            continue;
-          }
-          
-          // Skip binary or large files that shouldn't be pushed as utf8
-          if (entry.name.endsWith('.zip') || entry.name.endsWith('.pdf') || 
-              entry.name.endsWith('.png') || entry.name.endsWith('.jpg') || 
-              entry.name.endsWith('.mp4') || entry.name.endsWith('.svg') ||
-              entry.name.endsWith('.txt')) {
-            continue;
-          }
+          // Skip node_modules, .git, dist
+          if (["node_modules", ".git", "dist", ".next"].includes(entry.name)) continue;
 
           if (entry.isDirectory()) {
             await readDir(fullPath, relativePath);
           } else {
             const content = await fs.readFile(fullPath, "utf8");
-            
-            // CRITICAL: GitHub Secret Scanning will block the entire push if ANY file contains a token.
-            // Even if the user says it's okay, GitHub's automated systems will reject it.
-            // We must mask any real GitHub token pattern.
-            const githubTokenRegex = /(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{82})/g;
-            let safeContent = content;
-            if (githubTokenRegex.test(content)) {
-              console.log(`Masking real GitHub token in ${relativePath}.`);
-              safeContent = content.replace(githubTokenRegex, 'ghp_***MASKED***');
-            }
-
             filesToPush.push({
               path: relativePath,
-              content: safeContent,
+              content: content,
               mode: "100644",
               type: "blob",
             });
@@ -207,13 +156,23 @@ async function startServer() {
 
       await readDir(process.cwd());
 
-      // 4. Create a new tree in one hit by passing content directly
-      const treeItems = filesToPush.map((file) => ({
-        path: file.path,
-        mode: file.mode,
-        type: file.type,
-        content: file.content,
-      }));
+      // 4. Create blobs for each file
+      const treeItems = await Promise.all(
+        filesToPush.map(async (file) => {
+          const { data: blobData } = await octokit.rest.git.createBlob({
+            owner: repoOwner,
+            repo: repoName,
+            content: file.content,
+            encoding: "utf-8",
+          });
+          return {
+            path: file.path,
+            mode: file.mode,
+            type: file.type,
+            sha: blobData.sha,
+          };
+        })
+      );
 
       // 5. Create a new tree
       const { data: newTreeData } = await octokit.rest.git.createTree({
@@ -233,46 +192,18 @@ async function startServer() {
       });
 
       // 7. Update the reference
-      try {
-        await octokit.rest.git.updateRef({
-          owner: repoOwner,
-          repo: repoName,
-          ref: `heads/${branch}`,
-          sha: newCommitData.sha,
-        });
-        res.json({ success: true, commitSha: newCommitData.sha });
-      } catch (updateError: any) {
-        if (updateError.message && updateError.message.includes("Repository rule violations found")) {
-          console.log("Branch protection detected. Creating a pull request instead...");
-          const newBranch = `update-${Date.now()}`;
-          
-          // Create a new branch
-          await octokit.rest.git.createRef({
-            owner: repoOwner,
-            repo: repoName,
-            ref: `refs/heads/${newBranch}`,
-            sha: newCommitData.sha,
-          });
+      await octokit.rest.git.updateRef({
+        owner: repoOwner,
+        repo: repoName,
+        ref: `heads/${branch}`,
+        sha: newCommitData.sha,
+      });
 
-          // Create a pull request
-          const { data: prData } = await octokit.rest.pulls.create({
-            owner: repoOwner,
-            repo: repoName,
-            title: "Automated Update from Gemini Adaptive Suite",
-            head: newBranch,
-            base: branch,
-            body: "This is an automated pull request generated because direct pushes to the main branch are protected by repository rules. Please review and merge.",
-          });
-
-          res.json({ success: true, commitSha: newCommitData.sha, prUrl: prData.html_url });
-        } else {
-          throw updateError;
-        }
-      }
+      res.json({ success: true, commitSha: newCommitData.sha });
     } catch (error: any) {
-      console.error("GitHub Push Error:", error);
+      console.error("GitHub Push Error:", error.message || error);
       
-      let userMessage = error.message || "Failed to push to GitHub due to an unexpected error.";
+      let userMessage = "Failed to push to GitHub due to an unexpected error.";
       let statusCode = 500;
 
       if (error.status === 401) {
@@ -290,9 +221,6 @@ async function startServer() {
       } else if (error.message && error.message.includes("Bad credentials")) {
         userMessage = "Bad credentials. Your token might be expired or revoked.";
         statusCode = 401;
-      } else if (error.status === 422) {
-        userMessage = `Validation failed: ${error.message}`;
-        statusCode = 422;
       }
 
       res.status(statusCode).json({ error: userMessage, details: error.message });
@@ -314,13 +242,9 @@ async function startServer() {
     });
   }
 
-  const server = app.listen(PORT, "0.0.0.0", () => {
+  app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
-  
-  // Increase timeout to 10 minutes for large GitHub pushes
-  server.timeout = 600000;
 }
 
 startServer();
-

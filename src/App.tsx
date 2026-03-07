@@ -5,22 +5,16 @@ import {
   Accessibility, Brush, MessageSquare, Newspaper, Cloud, Terminal, Briefcase, 
   PenTool, Music, Archive, Skull, Search, ChevronDown, ChevronUp, RotateCcw,
   Lightbulb, Play, BookOpen, Wrench, FileText, Settings, Github,
-  Loader2, XCircle, CheckCircle2, AlertCircle, Image as ImageIcon, Copy
+  Loader2, XCircle, CheckCircle2, AlertCircle, Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Switch } from './components/Switch';
 import { CodeBlock } from './components/CodeBlock';
-import { VoiceCommand } from './components/VoiceCommand';
-import { ClipboardTester } from './components/ClipboardTester';
 import { AndroidExport } from './components/AndroidExport';
-import { DeviceSync } from './components/DeviceSync';
 import { generateUserScript } from './utils/scriptGenerator';
 import { ScriptConfig } from './types';
-import { clipboardService } from './services/clipboardService';
-import { sendSocketMessage, addSocketListener } from './services/socketService';
-import { getActiveBridge } from './services/bridgeService';
 
 // --- INITIAL CONFIGURATION (FULL RESTORATION) ---
 export const INITIAL_CONFIG: ScriptConfig = {
@@ -45,16 +39,8 @@ export const INITIAL_CONFIG: ScriptConfig = {
   enableYouTube: true,
 
   // Models
-  enableGemini3_1Flash: true,
-  enableGemini3_1Pro: true,
-  enableGemini3_1FlashImage: true,
-  enableGemini3_0Flash: true,
   enableGemini3_0Pro: true,
-  enableGemini2_5FlashImage: true,
-  enableGemini2_5NativeAudio: true,
-  enableGemini2_5TTS: true,
-  enableVeo3_1Fast: true,
-  enableVeo3_1Generate: true,
+  enableGemini3_0Flash: true,
   enableDeepThink: true,
   enableHighFidelityMedia: true,
   
@@ -62,20 +48,22 @@ export const INITIAL_CONFIG: ScriptConfig = {
   enableNativeClipboard: true, 
   enableNativePrint: false,
   enableHapticFeedback: true,
-  enableContinuousVoice: true,
-  enableContextSnatcher: true,
-  enableVoiceCommandMode: true,
+  enableContinuousVoice: false,
+  enableContextSnatcher: false,
+  enableVoiceCommandMode: false,
   enableLogConsole: false,
-  
+
   // Dev
   enableTermuxBridge: true,
   enableAShellBridge: false,
   
-  // Models Legacy (Disabled)
+  // Models Legacy
   enableMariner: false,
   enableCanvasPro: false,
   enableUnlimitedBudget: false,
   enableExperimentalModels: false,
+  enableGemini2_0Flash: false,
+  enableGemini2_0Pro: false,
   enableProjectAstra: false,
   
   // Commerce
@@ -338,22 +326,19 @@ const SECTION_DEFINITIONS = [
     ]
   },
   {
-    id: 'gemini_models',
-    title: 'Gemini & Veo Models (2026)',
-    icon: BrainCircuit,
+    id: 'gemini3',
+    title: 'Gemini 3.0 (2026) & Models',
+    icon: Sparkles,
     color: 'text-indigo-400',
     items: [
-      { key: 'enableGemini3_1Pro', label: 'Gemini 3.1 Pro' },
-      { key: 'enableGemini3_1Flash', label: 'Gemini 3.1 Flash' },
-      { key: 'enableGemini3_1FlashImage', label: 'Gemini 3.1 Flash Image' },
-      { key: 'enableGemini3_0Pro', label: 'Gemini 3.0 Pro' },
-      { key: 'enableGemini3_0Flash', label: 'Gemini 3.0 Flash' },
-      { key: 'enableGemini2_5FlashImage', label: 'Gemini 2.5 Flash Image' },
-      { key: 'enableGemini2_5NativeAudio', label: 'Gemini 2.5 Native Audio' },
-      { key: 'enableGemini2_5TTS', label: 'Gemini 2.5 TTS' },
-      { key: 'enableVeo3_1Fast', label: 'Veo 3.1 Fast' },
-      { key: 'enableVeo3_1Generate', label: 'Veo 3.1 Generate' },
+      { key: 'enableGemini3_0Flash', label: 'Enable Gemini 3.0 Flash Preview' },
+      { key: 'enableGemini3_0Pro', label: 'Enable Gemini 3.0 Pro Preview' },
+      { key: 'enableGemini2_0Flash', label: 'Enable Gemini 2.0 Flash (Legacy)' },
+      { key: 'enableGemini2_0Pro', label: 'Enable Gemini 2.0 Pro (Legacy)' },
       { key: 'enableDeepThink', label: 'DeepThink v3 (Reasoning)' },
+      { key: 'enableMariner', label: 'Mariner (Navigation)' },
+      { key: 'enableProjectAstra', label: 'Project Astra (Realtime Multimodal)' },
+      { key: 'enableDeepResearchV2', label: 'Deep Research v2' },
     ]
   },
   {
@@ -681,42 +666,10 @@ const GitHubIssues: React.FC = () => {
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<ScriptConfig>(INITIAL_CONFIG);
-  const [autoCopyEnabled, setAutoCopyEnabled] = useState(false);
-
-  useEffect(() => {
-    if (autoCopyEnabled) {
-      const script = generateUserScript(config);
-      clipboardService.write(script).catch(console.error);
-    }
-  }, [config, autoCopyEnabled]);
-
-  useEffect(() => {
-    addSocketListener((data) => {
-      if (data.type === 'CONFIG_SYNC') {
-        setConfig(data.config);
-        console.log('Config synced from remote:', data.config);
-      } else if (data.type === 'FRITZBOX_DATA') {
-        setFritzBoxData(data);
-        console.log('FritzBox data received:', data);
-      }
-    });
-  }, []);
   const [searchQuery, setSearchQuery] = useState('');
-  const [fritzBoxData, setFritzBoxData] = useState<any>(null);
   const [remoteVersion, setRemoteVersion] = useState<string | null>(null);
   const [isCheckingVersion, setIsCheckingVersion] = useState(false);
   const [activeTab, setActiveTab] = useState<'configurator' | 'readme' | 'troubleshooting' | 'license' | 'forum' | 'security'>('configurator');
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    performance_max: false,
-    accessibility_core: false,
-    identity: false,
-    gemini_models: false,
-    commerce: false,
-  });
-
-  const toggleSection = (id: string) => {
-    setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
-  };
 
   const [showGithubModal, setShowGithubModal] = useState(false);
   const [githubToken, setGithubToken] = useState('');
@@ -852,6 +805,14 @@ const App: React.FC = () => {
     checkVersion();
   }, []);
 
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    performance_max: true,
+    accessibility_core: true,
+    identity: true,
+    gemini3: true,
+    commerce: true,
+  });
+
   const generatedScript = useMemo(() => {
     try {
       return generateUserScript(config);
@@ -883,6 +844,10 @@ const App: React.FC = () => {
 
   const toggle = (key: keyof ScriptConfig) => {
     setConfig(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleSection = (id: string) => {
+    setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const applyProfile = (profileType: 'max' | 'samsung' | 'stealth' | 'reset') => {
@@ -1254,18 +1219,6 @@ const App: React.FC = () => {
           </div>
 
           {activeTab === 'configurator' && (
-            <div className="mb-6 flex items-center justify-between bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Copy size={18} className="text-indigo-400" />
-                  <span className="text-sm text-slate-200">Auto-Copy Script</span>
-                  <Switch checked={autoCopyEnabled} onChange={setAutoCopyEnabled} />
-                </div>
-                <DeviceSync onSync={() => sendSocketMessage('CONFIG_SYNC', { config })} />
-              </div>
-            </div>
-          )}
-          {activeTab === 'configurator' && (
             <>
               {/* Search Bar */}
               <div className="relative sticky top-4 z-10">
@@ -1337,17 +1290,7 @@ const App: React.FC = () => {
           )}
 
           {activeTab === 'troubleshooting' && (
-            <div className="space-y-6">
-              <ClipboardTester />
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-xl">
-                <h2 className="text-lg font-semibold text-white mb-4">Hardware Control</h2>
-                <div className="flex gap-4">
-                  <button onClick={() => getActiveBridge().hardware.setDeXMode(true)} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600">Toggle DeX Mode</button>
-                  <button onClick={() => getActiveBridge().hardware.setBatteryOptimization(true)} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600">Toggle Battery Opt</button>
-                </div>
-              </div>
-              <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/TROUBLESHOOTING.md" />
-            </div>
+            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/TROUBLESHOOTING.md" />
           )}
 
           {activeTab === 'license' && (
@@ -1401,7 +1344,6 @@ const App: React.FC = () => {
 
           <div className="flex-grow">
             <CodeBlock code={generatedScript} />
-            <VoiceCommand />
           </div>
 
           <div className="flex flex-col items-center justify-center my-4 gap-3">

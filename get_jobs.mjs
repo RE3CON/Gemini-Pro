@@ -3,22 +3,18 @@ import { Octokit } from "@octokit/rest";
 const octokit = new Octokit({ auth: 'ghp_***MASKED***' });
 const owner = 'RE3CON';
 const repo = 'Gemini-Pro';
-const run_id = 22798061383;
+const run_id = '22797946626'; // Failed Publish Package run
 
-async function getWorkflowRunJobs() {
+async function getJobs() {
   try {
-    const { data } = await octokit.actions.listJobsForWorkflowRun({
+    const jobs = await octokit.actions.listJobsForWorkflowRun({
       owner,
       repo,
       run_id
     });
     
-    console.log(`--- Jobs for Run ${run_id} ---`);
-    data.jobs.forEach(job => {
-      console.log(`Job: ${job.name}, Status: ${job.status}, Conclusion: ${job.conclusion}`);
-      if (job.conclusion === 'failure') {
-        // We can't easily get logs here without another call, but this confirms the failure.
-      }
+    jobs.data.jobs.forEach(job => {
+      console.log(`Job: ${job.name} (ID: ${job.id}, Status: ${job.status}, Conclusion: ${job.conclusion})`);
     });
     
   } catch (error) {
@@ -26,4 +22,4 @@ async function getWorkflowRunJobs() {
   }
 }
 
-getWorkflowRunJobs();
+getJobs();

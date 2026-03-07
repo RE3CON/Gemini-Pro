@@ -19,7 +19,7 @@
 
 <br />
 
-# Gemini-AI
+# AI Identity Hardener
 
 Sovereign fingerprint protection for Google AI & LLM environments. Merged Golden Master architecture with zero-blindspot hardening.
 
@@ -33,8 +33,6 @@ It includes active modules for:
 - **Masking Engine:** Protects spoofed functions from `.toString()` detection.
 - **Jitter Logic:** Injects noise into timing APIs (`performance.now`) and `requestAnimationFrame`.
 - **GNOME Simulation:** Provides realistic screen geometry for Linux desktop environments.
-- **Samsung Ecosystem Integration:** Native-like features for S-Pen, Samsung Health, and more (via PWA/Bridge).
-- **Microsoft Ecosystem Integration:** Native-like features for Edge WebView2 and Windows system integration.
 
 ## How to Use
 
@@ -43,10 +41,6 @@ It includes active modules for:
    - Click the **Install UserScript** badge at the top of this page to install directly from GitHub.
    - Alternatively, copy the script from the [Web App](https://re3con.github.io/Gemini-AI/).
 3. **Activate:** Save the script and refresh any Google AI pages (e.g., `gemini.google.com`, `aistudio.google.com`). The script will run automatically at `document-start`.
-
-## PWA Support
-
-This application is a Progressive Web App (PWA). You can install it directly to your device for a native-like experience, which is required for certain Samsung Ecosystem integrations.
 
 ## Browser Test Pages
 
@@ -80,8 +74,6 @@ When hardening your identity, it's also important to consider *how* you access G
 - **Dark/Light Mode:** Automatically syncs with your system preferences.
 - **AI Logo Generation:** Generate unique, transparent, and colorful security-focused logos using the Gemini API.
 - **Auto-Updates:** The script includes `@updateURL` and `@downloadURL` pointing to this repository, ensuring you always have the latest version.
-- **Samsung Ecosystem Integration:** Native-like features for S-Pen, Samsung Health, and more (via PWA/Bridge).
-- **Microsoft Ecosystem Integration:** Native-like features for Edge WebView2 and Windows system integration.
 
 ## Compilers, Ports & Prototyping
 
