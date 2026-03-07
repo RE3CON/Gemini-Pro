@@ -72,16 +72,28 @@ async function startServer() {
       
       // 1. Use Flash for Everything Possible: Reverted to 2.5 flash image as 3.1 requires user-provided API key
       // 3. Minimize Context Windows: Optimized the prompt to be highly concise and token-efficient
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image',
-        contents: {
-          parts: [
-            {
-              text: 'Cybersecurity app logo. Vector art, neon gradients, futuristic shield, no text, transparent background.',
-            },
-          ],
+      let response;
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash-image',
+            contents: {
+              parts: [
+                {
+                  text: 'Cybersecurity app logo. Vector art, neon gradients, futuristic shield, no text, transparent background.',
+                },
+              ],
+            }
+          });
+          break;
+        } catch (e) {
+          retries--;
+          if (retries === 0) throw e;
+          console.warn(`Logo generation failed, retrying... (${retries} attempts left)`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
-      });
+      }
 
       let found = false;
       for (const part of response.candidates?.[0]?.content?.parts || []) {
