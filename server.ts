@@ -52,6 +52,20 @@ async function startServer() {
     apiLimiter(req, res, next);
   });
 
+  app.post("/api/save-logo", async (req, res) => {
+    try {
+      const { imageData } = req.body;
+      if (!imageData) return res.status(400).json({ error: "No image data provided" });
+      
+      const buffer = Buffer.from(imageData, 'base64');
+      await fs.writeFile(path.join(process.cwd(), 'public', 'logo.png'), buffer);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Save Logo Error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Samsung Integration Routes
   app.post("/api/samsung/dex", async (req, res) => {
     const { enabled } = req.body;
@@ -131,7 +145,7 @@ async function startServer() {
       }
 
       // 3. Read files to push (recursive)
-      const filesToPush: { path: string; content: string; mode: "100644" | "100755" | "040000" | "160000" | "120000"; type: "blob" | "tree" | "commit" }[] = [];
+      const filesToPush: { path: string; content: string; mode: "100644" | "100755" | "040000" | "160000" | "120000"; type: "blob" | "tree" | "commit"; isBinary: boolean }[] = [];
       
       async function readDir(dir: string, base: string = "") {
         const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -152,7 +166,8 @@ async function startServer() {
           
           // Skip binary or large files that shouldn't be pushed as utf8
           if (entry.name.endsWith('.zip') || entry.name.endsWith('.pdf') || 
-              entry.name.endsWith('.png') || entry.name.endsWith('.jpg') || 
+              (entry.name.endsWith('.png') && entry.name !== 'logo.png') || 
+              entry.name.endsWith('.jpg') || 
               entry.name.endsWith('.mp4') || entry.name.endsWith('.svg') ||
               entry.name.endsWith('.txt')) {
             continue;
@@ -161,16 +176,17 @@ async function startServer() {
           if (entry.isDirectory()) {
             await readDir(fullPath, relativePath);
           } else {
-            const content = await fs.readFile(fullPath, "utf8");
+            const isBinary = entry.name.endsWith('.png') || entry.name.endsWith('.jpg') || entry.name.endsWith('.ico');
+            const content = await fs.readFile(fullPath, isBinary ? "base64" : "utf8");
             
             // CRITICAL: GitHub Secret Scanning will block the entire push if ANY file contains a token.
-            // Even if the user says it's okay, GitHub's automated systems will reject it.
-            // We must mask any real GitHub token pattern.
-            const githubTokenRegex = /(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{82})/g;
             let safeContent = content;
-            if (githubTokenRegex.test(content)) {
-              console.log(`Masking real GitHub token in ${relativePath}.`);
-              safeContent = content.replace(githubTokenRegex, 'ghp_***MASKED***');
+            if (!isBinary) {
+              const githubTokenRegex = /(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{82})/g;
+              if (githubTokenRegex.test(content)) {
+                console.log(`Masking real GitHub token in ${relativePath}.`);
+                safeContent = content.replace(githubTokenRegex, 'ghp_***MASKED***');
+              }
             }
 
             filesToPush.push({
@@ -178,6 +194,7 @@ async function startServer() {
               content: safeContent,
               mode: "100644",
               type: "blob",
+              isBinary
             });
           }
         }
@@ -185,12 +202,29 @@ async function startServer() {
 
       await readDir(process.cwd());
 
-      // 4. Create a new tree in one hit by passing content directly
-      const treeItems = filesToPush.map((file) => ({
-        path: file.path,
-        mode: file.mode,
-        type: file.type,
-        content: file.content,
+      // 4. Create blobs for binary files and prepare tree items
+      const treeItems = await Promise.all(filesToPush.map(async (file) => {
+        if (file.isBinary) {
+          const { data: blobData } = await octokit.rest.git.createBlob({
+            owner: repoOwner,
+            repo: repoName,
+            content: file.content,
+            encoding: "base64",
+          });
+          return {
+            path: file.path,
+            mode: file.mode,
+            type: file.type,
+            sha: blobData.sha,
+          };
+        } else {
+          return {
+            path: file.path,
+            mode: file.mode,
+            type: file.type,
+            content: file.content,
+          };
+        }
       }));
 
       // 5. Create a new tree

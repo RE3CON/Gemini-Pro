@@ -1,6 +1,7 @@
 
 export interface ScriptConfig {
   version: string;
+  logoUrl?: string | null;
   // Core Identity
   spoofPixel11ProXL: boolean; // TARGET: Pixel 11 Pro XL (Android 17)
   spoofLocation: boolean; // US-SRE Mountain View

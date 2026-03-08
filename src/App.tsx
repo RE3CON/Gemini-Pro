@@ -702,6 +702,26 @@ const App: React.FC = () => {
     return { zone: Intl.DateTimeFormat().resolvedOptions().timeZone };
   });
   const [hardware, setHardware] = useState({ memory: (navigator as any).deviceMemory || 'N/A', cores: navigator.hardwareConcurrency || 'N/A', gpu: 'Loading...' });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [fritzBoxData, setFritzBoxData] = useState<any>(null);
+  const [remoteVersion, setRemoteVersion] = useState<string | null>(null);
+  const [isCheckingVersion, setIsCheckingVersion] = useState(false);
+  const [activeTab, setActiveTab] = useState<'configurator' | 'readme' | 'troubleshooting' | 'license' | 'forum' | 'security'>('configurator');
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    performance_max: false,
+    accessibility_core: false,
+    identity: false,
+    gemini_models: false,
+    commerce: false,
+  });
+  const [showGithubModal, setShowGithubModal] = useState(false);
+  const [githubToken, setGithubToken] = useState('');
+  const [githubRepo, setGithubRepo] = useState('Gemini-Pro');
+  const [isPushing, setIsPushing] = useState(false);
+  const [pushStatus, setPushStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [isGeneratingLogo, setIsGeneratingLogo] = useState(false);
+  const [toast, setToast] = useState<{ id: number; type: 'success' | 'error' | 'info'; message: string } | null>(null);
 
   useEffect(() => {
     // GPU Detection
@@ -872,14 +892,19 @@ const App: React.FC = () => {
     };
   }, []);
 
+  const getRawUrl = (path: string) => {
+    const branch = githubRepo === 'Gemini-Pro' ? 'master' : 'main';
+    return `https://raw.githubusercontent.com/RE3CON/${githubRepo}/${branch}/${path}`;
+  };
+
   const generatedScript = useMemo(() => {
     try {
-      return generateUserScript(config);
+      return generateUserScript({ ...config, logoUrl });
     } catch (e) {
       console.error("Script generation failed", e);
       return "// Error generating script. Please reset configuration.";
     }
-  }, [config]);
+  }, [config, logoUrl]);
 
   useEffect(() => {
     const start = performance.now();
@@ -916,31 +941,9 @@ const App: React.FC = () => {
       }
     });
   }, []);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [fritzBoxData, setFritzBoxData] = useState<any>(null);
-  const [remoteVersion, setRemoteVersion] = useState<string | null>(null);
-  const [isCheckingVersion, setIsCheckingVersion] = useState(false);
-  const [activeTab, setActiveTab] = useState<'configurator' | 'readme' | 'troubleshooting' | 'license' | 'forum' | 'security'>('configurator');
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    performance_max: false,
-    accessibility_core: false,
-    identity: false,
-    gemini_models: false,
-    commerce: false,
-  });
-
   const toggleSection = (id: string) => {
     setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
   };
-
-  const [showGithubModal, setShowGithubModal] = useState(false);
-  const [githubToken, setGithubToken] = useState('');
-  const [githubRepo, setGithubRepo] = useState('Gemini-Pro');
-  const [isPushing, setIsPushing] = useState(false);
-  const [pushStatus, setPushStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [isGeneratingLogo, setIsGeneratingLogo] = useState(false);
-  const [toast, setToast] = useState<{ id: number; type: 'success' | 'error' | 'info'; message: string } | null>(null);
 
   const showToast = (type: 'success' | 'error' | 'info', message: string) => {
     const id = Date.now();
@@ -1014,6 +1017,18 @@ const App: React.FC = () => {
         const newLogoUrl = `data:image/png;base64,${imageData}`;
         setLogoUrl(newLogoUrl);
         localStorage.setItem('re3con_cached_logo', newLogoUrl);
+        
+        // Save to server for GitHub push
+        try {
+          await fetch('/api/save-logo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageData })
+          });
+        } catch (saveErr) {
+          console.error("Failed to save logo to server:", saveErr);
+        }
+
         showToast('success', 'Logo generated successfully!');
       } else {
         throw error || new Error("Failed to generate logo data.");
@@ -1096,7 +1111,7 @@ const App: React.FC = () => {
     setIsCheckingVersion(true);
     try {
       // Attempt to fetch the version from the userscript on GitHub
-      const response = await fetch('https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/dist/gemini-adaptive.user.js');
+      const response = await fetch(getRawUrl('dist/gemini-adaptive.user.js'));
       if (response.ok) {
         const text = await response.text();
         const versionMatch = text.match(/@version\s+([^\n\r]+)/);
@@ -1586,7 +1601,7 @@ const App: React.FC = () => {
           )}
 
           {activeTab === 'readme' && (
-            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/README.md" />
+            <GitHubMarkdown url={getRawUrl('README.md')} />
           )}
 
           {activeTab === 'troubleshooting' && (
@@ -1599,16 +1614,16 @@ const App: React.FC = () => {
                   <button onClick={() => getActiveBridge().hardware.setBatteryOptimization(true)} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600">Toggle Battery Opt</button>
                 </div>
               </div>
-              <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/TROUBLESHOOTING.md" />
+              <GitHubMarkdown url={getRawUrl('TROUBLESHOOTING.md')} />
             </div>
           )}
 
           {activeTab === 'license' && (
-            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/LICENSE" />
+            <GitHubMarkdown url={getRawUrl('LICENSE')} />
           )}
 
           {activeTab === 'security' && (
-            <GitHubMarkdown url="https://raw.githubusercontent.com/RE3CON/Gemini-Pro/master/SECURITY.md" />
+            <GitHubMarkdown url={getRawUrl('SECURITY.md')} />
           )}
 
           {activeTab === 'forum' && (

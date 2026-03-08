@@ -485,7 +485,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
 // @description  FINAL MERGE: Canvas-Hard-Spoof, Native Masking, Intl-Proxy, Audio Jitter & Zero-Leak Specs.
 // @author       RE3CON
 // @license      MIT
-// @icon         https://www.gstatic.com/images/branding/product/2x/gemini_android_192dp.png
+// @icon         ${config.logoUrl || 'https://www.gstatic.com/images/branding/product/2x/gemini_android_192dp.png'}
 // @match        https://*.google.com/*
 // @match        https://*.google.ad/*
 // @match        https://*.google.dev/*
