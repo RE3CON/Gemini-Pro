@@ -268,6 +268,10 @@ export interface ScriptConfig {
   enableDeepResearchV2: boolean;
   enableSafetyOverride: boolean;
   enableFutureLabs: boolean;
+  
+  // Advanced ADB Spoofing & Chrome Flag Injection
+  enableCommandLineOnNonRootedDevices: boolean;
+  commandLineArguments: string;
 }
 
 export interface FeatureFlag {

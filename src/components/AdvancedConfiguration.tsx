@@ -1,15 +1,33 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Search, Cpu, Globe, Settings, ChevronRight, LayoutList } from 'lucide-react';
+import { ChevronLeft, Search, Cpu, Globe, Settings, ChevronRight, LayoutList, Terminal } from 'lucide-react';
 
 export const AdvancedConfiguration: React.FC = () => {
   const [cacheSize, setCacheSize] = useState(512);
-  const [activeCategory, setActiveCategory] = useState<'Hardware' | 'Network' | 'Stealth' | 'Engine'>('Hardware');
+  const [activeCategory, setActiveCategory] = useState<'Hardware' | 'Network' | 'Stealth' | 'Engine' | 'ADB & Flags'>('Hardware');
+  const [commandLineArgs, setCommandLineArgs] = useState('--disable-gpu --disable-web-rtc --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"');
+
+  const loadRecommendedFlags = () => {
+    const recommended = [
+      '--disable-gpu',
+      '--disable-web-rtc',
+      '--disable-web-security',
+      '--disable-notifications',
+      '--disable-background-networking',
+      '--disable-sync',
+      '--no-sandbox',
+      '--disable-infobars',
+      '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"',
+      '--proxy-server="socks5://127.0.0.1:9050"'
+    ].join(' ');
+    setCommandLineArgs(recommended);
+  };
 
   const categories = [
     { name: 'Hardware', icon: Cpu },
     { name: 'Network', icon: Globe },
     { name: 'Stealth', icon: LayoutList },
     { name: 'Engine', icon: Settings },
+    { name: 'ADB & Flags', icon: Terminal },
   ] as const;
 
   const renderContent = () => {
@@ -32,6 +50,31 @@ export const AdvancedConfiguration: React.FC = () => {
               </div>
             </div>
             <SettingItem label="Process Memory Limit" type="dropdown" value="Site-Per-Process" />
+          </div>
+        );
+      case 'ADB & Flags':
+        return (
+          <div className="space-y-4">
+            <h2 className="text-sm font-semibold tracking-wider text-[#81c995] mb-4">ADB SPOOFING & FLAG INJECTION</h2>
+            <SettingItem label="Enable command line on non-rooted devices" type="toggle" value={false} />
+            <div className="mt-4">
+              <label className="block text-sm text-gray-400 mb-2">Command Line Arguments</label>
+              <textarea 
+                className="w-full bg-[#202124] text-white p-3 rounded-lg text-sm font-mono"
+                rows={6}
+                value={commandLineArgs}
+                onChange={(e) => setCommandLineArgs(e.target.value)}
+              />
+              <button 
+                onClick={loadRecommendedFlags}
+                className="mt-2 text-xs bg-[#1e2e2a] text-[#81c995] px-3 py-1 rounded-md hover:bg-[#2a3e39]"
+              >
+                Load Recommended Flags
+              </button>
+              <p className="text-xs text-gray-500 mt-2">
+                Common flags: --disable-gpu, --disable-web-rtc, --disable-web-security, --user-agent="...", --proxy-server="..."
+              </p>
+            </div>
           </div>
         );
       default:

@@ -260,4 +260,8 @@ export const INITIAL_CONFIG: ScriptConfig = {
   enableDeepResearchV2: false,
   enableSafetyOverride: false,
   enableFutureLabs: false,
+  
+  // Advanced ADB Spoofing & Chrome Flag Injection
+  enableCommandLineOnNonRootedDevices: false,
+  commandLineArguments: '--disable-gpu --disable-web-rtc --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"',
 };

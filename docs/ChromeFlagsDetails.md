@@ -111,6 +111,21 @@ The following experimental flags are currently enabled in your environment. Thes
 | `webtransport-developer-mode` | Enables WebTransport developer mode. |
 | `xslt` | Enables XSLT support. |
 
+## Recommended Command Line Arguments
+
+In addition to experimental flags, the following command-line arguments are recommended for optimal stealth and performance:
+
+- `--disable-gpu`: Reduces GPU fingerprinting.
+- `--disable-web-rtc`: Prevents WebRTC leaks.
+- `--disable-web-security`: Enables advanced proxying/spoofing.
+- `--disable-notifications`: Enhances stealth.
+- `--disable-background-networking`: Prevents background data leaks.
+- `--disable-sync`: Disables Chrome sync.
+- `--no-sandbox`: Required for some containerized environments.
+- `--disable-infobars`: Provides a cleaner UI.
+- `--user-agent="..."`: Forces a spoofed user agent.
+- `--proxy-server="socks5://127.0.0.1:9050"`: Routes traffic through a local SOCKS5 proxy.
+
 ***
 
 *Note: This list is dynamically generated based on your current environment. Many of these flags are highly experimental and subject to change.*
