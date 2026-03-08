@@ -697,7 +697,13 @@ const App: React.FC = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   const [screenRes, setScreenRes] = useState({ width: screen.width, height: screen.height });
   const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const [timeInfo, setTimeInfo] = useState({ zone: Intl.DateTimeFormat().resolvedOptions().timeZone, local: new Date().toLocaleTimeString() });
+  const [timeInfo, setTimeInfo] = useState(() => {
+    const now = new Date();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const offset = -now.getTimezoneOffset() / 60;
+    const sign = offset >= 0 ? '+' : '-';
+    return { zone: `${tz} (GMT ${sign}${Math.abs(offset)}h)` };
+  });
   const [hardware, setHardware] = useState({ memory: (navigator as any).deviceMemory || 'N/A', cores: navigator.hardwareConcurrency || 'N/A', gpu: 'Loading...' });
 
   useEffect(() => {
@@ -753,14 +759,36 @@ const App: React.FC = () => {
     }
     
     // Browser Detection
-    const ua = navigator.userAgent;
-    let name = 'Unknown';
-    let version = 'Unknown';
-    if (ua.includes('Firefox/')) { name = 'Firefox'; version = ua.split('Firefox/')[1]; }
-    else if (ua.includes('Edg/')) { name = 'Edge'; version = ua.split('Edg/')[1]; }
-    else if (ua.includes('Chrome/')) { name = 'Chrome'; version = ua.split('Chrome/')[1].split(' ')[0]; }
-    else if (ua.includes('Safari/')) { name = 'Safari'; version = ua.split('Version/')[1]?.split(' ')[0] || ua.split('Safari/')[1]; }
-    setBrowserInfo({ name, version });
+    const fallbackUA = () => {
+      const ua = navigator.userAgent;
+      let name = 'Unknown';
+      let version = 'Unknown';
+      if (ua.includes('Firefox/')) { name = 'Firefox'; version = ua.split('Firefox/')[1]; }
+      else if (ua.includes('Edg/')) { name = 'Edge'; version = ua.split('Edg/')[1]; }
+      else if (ua.includes('Chrome/')) { name = 'Chrome'; version = ua.split('Chrome/')[1].split(' ')[0]; }
+      else if (ua.includes('Safari/')) { name = 'Safari'; version = ua.split('Version/')[1]?.split(' ')[0] || ua.split('Safari/')[1]; }
+      setBrowserInfo({ name, version });
+    };
+
+    if ((navigator as any).userAgentData) {
+      (navigator as any).userAgentData.getHighEntropyValues(['fullVersionList'])
+        .then((uaData: any) => {
+          if (uaData.fullVersionList && uaData.fullVersionList.length > 0) {
+            // Find the main browser brand
+            const browser = uaData.fullVersionList.find((b: any) => !b.brand.includes('Not A(Brand)'));
+            if (browser) {
+              setBrowserInfo({ name: browser.brand, version: browser.version });
+            } else {
+              fallbackUA();
+            }
+          } else {
+            fallbackUA();
+          }
+        })
+        .catch(fallbackUA);
+    } else {
+      fallbackUA();
+    }
 
     // Theme & Language
     const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -809,7 +837,7 @@ const App: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
     const timeInterval = setInterval(() => {
-        setTimeInfo({ zone: Intl.DateTimeFormat().resolvedOptions().timeZone, local: new Date().toLocaleTimeString() });
+        setTimeInfo({ zone: Intl.DateTimeFormat().resolvedOptions().timeZone });
     }, 1000);
     
     return () => {
@@ -1609,7 +1637,7 @@ const App: React.FC = () => {
         )}
         <footer className="mt-8 mb-4 mx-4 p-4 border border-slate-700 rounded-xl bg-slate-950 text-[10px] text-slate-400 font-mono shadow-lg">
           <div className="mb-2 font-bold text-slate-200 uppercase tracking-wider">System & Network Diagnostics</div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-2 gap-x-4">
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
             <span><span className="text-slate-500">Device:</span> {deviceInfo.manufacturer} {deviceInfo.model} ({deviceInfo.platform})</span>
             <span><span className="text-slate-500">Android:</span> {androidVersion || 'N/A'}</span>
             <span><span className="text-slate-500">Browser:</span> {browserInfo.name} {browserInfo.version}</span>
@@ -1627,9 +1655,8 @@ const App: React.FC = () => {
             <span><span className="text-slate-500">Engine:</span> Vite</span>
             <span><span className="text-slate-500">Server:</span> Nginx</span>
             <span><span className="text-slate-500">Node:</span> {serverInfo?.nodeVersion || 'Loading...'}</span>
-            <span><span className="text-slate-500">Env:</span> {import.meta.env.MODE}</span>
+            <span><span className="text-slate-500">Env:</span> {(import.meta as any).env?.MODE || 'development'}</span>
             <span><span className="text-slate-500">Zone:</span> {timeInfo.zone}</span>
-            <span><span className="text-slate-500">ExecTime:</span> {generationTime}ms</span>
           </div>
         </footer>
       </div>

@@ -21,7 +21,7 @@ async function startServer() {
   // Rate limiting for API routes (excluding logo generation)
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 100, // Limit each IP to 100 requests per windowMs
+    limit: 1000, // Increased limit for development/testing
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     message: { error: "Too many requests, please try again later." },
