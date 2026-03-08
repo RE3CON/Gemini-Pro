@@ -5,7 +5,7 @@ import {
   Accessibility, Brush, MessageSquare, Newspaper, Cloud, Terminal, Briefcase, 
   PenTool, Music, Archive, Skull, Search, ChevronDown, ChevronUp, RotateCcw,
   Lightbulb, Play, BookOpen, Wrench, FileText, Settings, Github,
-  Loader2, XCircle, CheckCircle2, AlertCircle, Image as ImageIcon, Copy
+  Loader2, XCircle, CheckCircle2, AlertCircle, Image as ImageIcon, Copy, Key
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
@@ -960,13 +960,12 @@ const App: React.FC = () => {
     }
 
     // 2. Aggressive Caching (Client-side)
+    // Only use cache if not explicitly regenerating
     const cachedLogo = localStorage.getItem('re3con_cached_logo');
-    if (cachedLogo) {
+    if (cachedLogo && !isGeneratingLogo) {
       setLogoUrl(cachedLogo);
-      showToast('success', 'Loaded cached logo instantly!');
-      return;
     }
-
+    
     setIsGeneratingLogo(true);
     try {
       // Platform injected API key
@@ -1043,7 +1042,8 @@ const App: React.FC = () => {
       } else if (errorMsg.includes("RESOURCE_EXHAUSTED") || errorMsg.includes("quota")) {
         showToast('error', 'Quota exceeded. Please select a different project.');
       } else {
-        showToast('error', 'Failed to generate logo. Please check your connection and API key.');
+        showToast('error', 'Failed to generate logo. Please select a valid API key.');
+        if (window.aistudio) await window.aistudio.openSelectKey();
       }
     } finally {
       setIsGeneratingLogo(false);
@@ -1441,6 +1441,18 @@ const App: React.FC = () => {
                     title="Generate Logo"
                   >
                     {isGeneratingLogo ? <Loader2 size={10} className="animate-spin text-blue-400" /> : <ImageIcon size={10} className="text-blue-400" />}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (window.aistudio) {
+                        await window.aistudio.openSelectKey();
+                        showToast('info', 'API Key selection opened.');
+                      }
+                    }}
+                    className="p-1 rounded-md hover:bg-white/10 transition-colors"
+                    title="Change API Key"
+                  >
+                    <Key size={10} className="text-amber-400" />
                   </button>
                   {remoteVersion && remoteVersion !== config.version && (
                     <span className="text-[9px] bg-rose-500 text-white px-1.5 py-0.5 rounded-full animate-pulse font-bold">NEW</span>
