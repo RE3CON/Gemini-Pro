@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { GoogleGenAI } from "@google/genai";
 import { Switch } from './components/Switch';
 import { CodeBlock } from './components/CodeBlock';
 import { VoiceCommand } from './components/VoiceCommand';
@@ -965,37 +966,70 @@ const App: React.FC = () => {
 
     setIsGeneratingLogo(true);
     try {
-      const response = await fetch('/api/generate-logo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ forceRefresh: false })
-      });
-
-      const data = await response.json();
+      // Platform injected API key
+      const apiKey = (process.env as any).API_KEY || (process.env as any).GEMINI_API_KEY;
       
-      if (response.ok && data.success) {
-        const newLogoUrl = `data:image/png;base64,${data.imageData}`;
+      if (!apiKey) {
+        if (window.aistudio) await window.aistudio.openSelectKey();
+        throw new Error("No API key available. Please select an API key.");
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
+      
+      // Try models in order of speed/reliability
+      let imageData = '';
+      let error: any = null;
+      
+      const models = ['gemini-2.5-flash-image', 'gemini-3.1-flash-image-preview'];
+      
+      for (const modelName of models) {
+        try {
+          console.log(`Attempting logo generation with ${modelName}...`);
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: {
+              parts: [
+                {
+                  text: 'Cybersecurity app logo. Vector art, neon gradients, futuristic shield, no text, transparent background.',
+                },
+              ],
+            }
+          });
+
+          for (const part of response.candidates?.[0]?.content?.parts || []) {
+            if (part.inlineData) {
+              imageData = part.inlineData.data;
+              break;
+            }
+          }
+          
+          if (imageData) break;
+        } catch (e: any) {
+          console.error(`Failed with ${modelName}:`, e);
+          error = e;
+        }
+      }
+
+      if (imageData) {
+        const newLogoUrl = `data:image/png;base64,${imageData}`;
         setLogoUrl(newLogoUrl);
-        localStorage.setItem('re3con_cached_logo', newLogoUrl); // Save to cache
+        localStorage.setItem('re3con_cached_logo', newLogoUrl);
         showToast('success', 'Logo generated successfully!');
       } else {
-        if (response.status === 401 && window.aistudio) {
-          await window.aistudio.openSelectKey();
-        }
-        if (response.status === 429) {
-          showToast('error', 'Quota exceeded for this project. Please select a different project in the API key selection dialog.');
-        } else {
-          showToast('error', data.details || data.error || 'Failed to generate logo.');
-        }
+        throw error || new Error("Failed to generate logo data.");
       }
     } catch (error: any) {
       console.error('Error generating logo:', error);
-      if (error.message && error.message.includes("Requested entity was not found.") && window.aistudio) {
+      const errorMsg = error.message || "";
+      
+      if ((errorMsg.includes("API_KEY_INVALID") || errorMsg.includes("API key not valid")) && window.aistudio) {
         await window.aistudio.openSelectKey();
+        showToast('error', 'Invalid API key. Please select a valid, paid project key.');
+      } else if (errorMsg.includes("RESOURCE_EXHAUSTED") || errorMsg.includes("quota")) {
+        showToast('error', 'Quota exceeded. Please select a different project.');
+      } else {
+        showToast('error', 'Failed to generate logo. Please check your connection and API key.');
       }
-      showToast('error', 'Network error during logo generation.');
     } finally {
       setIsGeneratingLogo(false);
     }
