@@ -698,11 +698,7 @@ const App: React.FC = () => {
   const [screenRes, setScreenRes] = useState({ width: screen.width, height: screen.height });
   const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [timeInfo, setTimeInfo] = useState(() => {
-    const now = new Date();
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const offset = -now.getTimezoneOffset() / 60;
-    const sign = offset >= 0 ? '+' : '-';
-    return { zone: `${tz} (GMT ${sign}${Math.abs(offset)}h)` };
+    return { zone: Intl.DateTimeFormat().resolvedOptions().timeZone };
   });
   const [hardware, setHardware] = useState({ memory: (navigator as any).deviceMemory || 'N/A', cores: navigator.hardwareConcurrency || 'N/A', gpu: 'Loading...' });
 
@@ -1635,28 +1631,32 @@ const App: React.FC = () => {
           <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel11ProXL ? "Mozilla/5.0 (Linux; Android 17; Pixel 11 Pro XL Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />
         </div>
         )}
-        <footer className="mt-8 mb-4 mx-4 p-4 border border-slate-700 rounded-xl bg-slate-950 text-[10px] text-slate-400 font-mono shadow-lg">
+        <footer className="mt-8 mb-4 mx-4 p-3 border border-slate-700 rounded-xl bg-slate-950 text-[8px] sm:text-[9px] text-slate-400 font-mono shadow-lg">
           <div className="mb-2 font-bold text-slate-200 uppercase tracking-wider">System & Network Diagnostics</div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
-            <span><span className="text-slate-500">Device:</span> {deviceInfo.manufacturer} {deviceInfo.model} ({deviceInfo.platform})</span>
-            <span><span className="text-slate-500">Android:</span> {androidVersion || 'N/A'}</span>
-            <span><span className="text-slate-500">Browser:</span> {browserInfo.name} {browserInfo.version}</span>
-            <span><span className="text-slate-500">Status:</span> {isOnline ? '🟢 Online' : '🔴 Offline'}</span>
-            <span><span className="text-slate-500">Conn:</span> {connectionType}</span>
-            <span><span className="text-slate-500">VPN:</span> {ipInfo?.vpn ? 'Yes' : 'No'}</span>
-            <span><span className="text-slate-500">IP:</span> {ipInfo?.ip || 'Loading...'}</span>
-            <span><span className="text-slate-500">Loc:</span> {ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'Loading...'}</span>
-            <span><span className="text-slate-500">Coords:</span> {ipInfo ? `${ipInfo.lat}, ${ipInfo.lon}` : 'Loading...'}</span>
-            <span><span className="text-slate-500">Lang:</span> {language}</span>
-            <span><span className="text-slate-500">Theme:</span> {theme}</span>
-            <span><span className="text-slate-500">HW:</span> {hardware.memory}GB RAM, {hardware.cores} Cores</span>
-            <span><span className="text-slate-500">GPU/Chip:</span> {hardware.gpu}</span>
-            <span><span className="text-slate-500">URL:</span> {window.location.origin}</span>
-            <span><span className="text-slate-500">Engine:</span> Vite</span>
-            <span><span className="text-slate-500">Server:</span> Nginx</span>
-            <span><span className="text-slate-500">Node:</span> {serverInfo?.nodeVersion || 'Loading...'}</span>
-            <span><span className="text-slate-500">Env:</span> {(import.meta as any).env?.MODE || 'development'}</span>
-            <span><span className="text-slate-500">Zone:</span> {timeInfo.zone}</span>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
+            <div className="flex flex-col gap-1">
+              <span><span className="text-slate-500">Device:</span> {deviceInfo.manufacturer} {deviceInfo.model} ({deviceInfo.platform})</span>
+              <span><span className="text-slate-500">Android:</span> {androidVersion || 'N/A'}</span>
+              <span><span className="text-slate-500">Browser:</span> {browserInfo.name} {browserInfo.version}</span>
+              <span><span className="text-slate-500">Status:</span> {isOnline ? '🟢 Online' : '🔴 Offline'}</span>
+              <span><span className="text-slate-500">Conn:</span> {connectionType}</span>
+              <span><span className="text-slate-500">VPN:</span> {ipInfo?.vpn ? 'Yes' : 'No'}</span>
+              <span><span className="text-slate-500">IP:</span> {ipInfo?.ip || 'Loading...'}</span>
+              <span><span className="text-slate-500">Loc:</span> {ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'Loading...'}</span>
+              <span><span className="text-slate-500">Coords:</span> {ipInfo ? `${ipInfo.lat}, ${ipInfo.lon}` : 'Loading...'}</span>
+              <span><span className="text-slate-500">Lang:</span> {language}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span><span className="text-slate-500">Theme:</span> {theme}</span>
+              <span><span className="text-slate-500">HW:</span> {hardware.memory}GB RAM, {hardware.cores} Cores</span>
+              <span className="break-all"><span className="text-slate-500">GPU/Chip:</span> {hardware.gpu}</span>
+              <span className="break-all"><span className="text-slate-500">URL:</span> {window.location.origin}</span>
+              <span><span className="text-slate-500">Engine:</span> Vite</span>
+              <span><span className="text-slate-500">Server:</span> Nginx</span>
+              <span><span className="text-slate-500">Node:</span> {serverInfo?.nodeVersion || 'Loading...'}</span>
+              <span><span className="text-slate-500">Env:</span> {(import.meta as any).env?.MODE || 'development'}</span>
+              <span><span className="text-slate-500">Zone:</span> {timeInfo.zone}</span>
+            </div>
           </div>
         </footer>
       </div>
