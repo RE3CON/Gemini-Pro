@@ -19,7 +19,7 @@ export const ClipboardButton: React.FC<ClipboardButtonProps> = ({ scriptContent 
   return (
     <button
       onClick={handleCopy}
-      className="fixed bottom-20 right-36 p-4 rounded-full shadow-lg transition-all bg-slate-700 hover:bg-slate-600"
+      className="fixed bottom-20 right-36 z-[100] p-4 rounded-full shadow-2xl transition-all bg-slate-800 hover:bg-slate-700 border border-slate-600"
     >
       <Clipboard className="text-white" />
     </button>

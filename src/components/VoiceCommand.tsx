@@ -23,7 +23,7 @@ export const VoiceCommand: React.FC = () => {
   return (
     <button
       onClick={toggleListening}
-      className={`fixed bottom-20 right-20 p-4 rounded-full shadow-lg transition-all ${isListening ? 'bg-red-500 animate-pulse' : 'bg-blue-500 hover:bg-blue-600'}`}
+      className={`fixed bottom-20 right-20 z-[100] p-4 rounded-full shadow-2xl transition-all ${isListening ? 'bg-red-600 animate-pulse border-red-400' : 'bg-blue-600 hover:bg-blue-500 border-blue-400'} border`}
     >
       {isListening ? <MicOff className="text-white" /> : <Mic className="text-white" />}
     </button>

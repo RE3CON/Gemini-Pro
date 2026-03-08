@@ -34,20 +34,22 @@ async function startServer() {
   });
 
   app.use(express.json());
-  app.use("/api/", (req, res, next) => {
-    if (req.path === "/generate-logo") {
-      return next();
-    }
-    apiLimiter(req, res, next);
-  });
 
-  // API routes
+  // API routes that don't need rate limiting or should be checked first
   app.get("/api/info", (req, res) => {
+    console.log("DEBUG: /api/info hit");
     res.json({
       nodeVersion: process.version,
       serverType: "Nginx",
       startTime: Date.now()
     });
+  });
+
+  app.use("/api", (req, res, next) => {
+    if (req.path === "/generate-logo" || req.path === "/info") {
+      return next();
+    }
+    apiLimiter(req, res, next);
   });
 
   // Samsung Integration Routes

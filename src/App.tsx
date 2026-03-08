@@ -718,13 +718,24 @@ const App: React.FC = () => {
       setHardware(prev => ({ ...prev, gpu: 'Not supported' }));
     }
     // Fetch Server Info
-    fetch('/api/info')
-      .then(res => res.json())
-      .then(data => {
+    const fetchServerInfo = async () => {
+      try {
+        const res = await fetch('/api/info');
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
         setServerInfo(data);
         setGenerationTime(Date.now() - data.startTime);
-      })
-      .catch(console.error);
+      } catch (err) {
+        console.error('Failed to fetch server info:', err);
+        // Fallback for development/preview if server is slow or blocked
+        setServerInfo({
+          nodeVersion: 'v22.22.0', 
+          serverType: 'Nginx',
+          startTime: Date.now()
+        });
+      }
+    };
+    fetchServerInfo();
 
     setIsPWA(window.matchMedia('(display-mode: standalone)').matches);
     
@@ -814,17 +825,32 @@ const App: React.FC = () => {
     }
     
     // IP Info (VPN/Proxy detection)
-    fetch('https://ipapi.co/json/')
-      .then(res => res.json())
-      .then(data => setIpInfo({
-        ip: data.ip, 
-        city: data.city, 
-        country: data.country_name,
-        vpn: data.proxy || false,
-        lat: data.latitude,
-        lon: data.longitude
-      }))
-      .catch(console.error);
+    const fetchIpInfo = async () => {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        setIpInfo({
+          ip: data.ip, 
+          city: data.city, 
+          country: data.country_name,
+          vpn: data.proxy || false,
+          lat: data.latitude,
+          lon: data.longitude
+        });
+      } catch (err) {
+        console.error('Failed to fetch IP info:', err);
+        setIpInfo({
+          ip: '127.0.0.1',
+          city: 'Unknown',
+          country: 'Unknown',
+          vpn: false,
+          lat: 0,
+          lon: 0
+        });
+      }
+    };
+    fetchIpInfo();
 
     // Resize & Time
     const handleResize = () => {
@@ -1410,37 +1436,37 @@ const App: React.FC = () => {
           <div className="flex overflow-x-auto hide-scrollbar bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
             <button 
               onClick={() => setActiveTab('configurator')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'configurator' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'configurator' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
             >
               <Settings size={16} /> Configurator
             </button>
             <button 
               onClick={() => setActiveTab('readme')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'readme' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'readme' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
             >
               <BookOpen size={16} /> Readme
             </button>
             <button 
               onClick={() => setActiveTab('troubleshooting')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'troubleshooting' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'troubleshooting' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
             >
               <Wrench size={16} /> Troubleshooting
             </button>
             <button 
               onClick={() => setActiveTab('license')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'license' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'license' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
             >
               <FileText size={16} /> License
             </button>
             <button 
               onClick={() => setActiveTab('forum')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'forum' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'forum' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
             >
               <MessageSquare size={16} /> Forum / Issues
             </button>
             <button 
               onClick={() => setActiveTab('security')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'security' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'security' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
             >
               <Shield size={16} /> Security
             </button>
@@ -1624,45 +1650,45 @@ const App: React.FC = () => {
               </p>
             </div>
             <CodeBlock code={generatedScript} />
-            <VoiceCommand />
-            <ClipboardButton scriptContent={generatedScript} />
           </div>
 
           <AndroidExport scriptContent={generatedScript} userAgent={config.spoofPixel11ProXL ? "Mozilla/5.0 (Linux; Android 17; Pixel 11 Pro XL Build/CP21.260116.011.A1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36" : navigator.userAgent} />
         </div>
         )}
-        <footer className="mt-8 mb-4 mx-4 p-3 border border-blue-800/40 rounded-xl bg-blue-950/90 text-[8px] sm:text-[9px] text-blue-200/60 font-mono shadow-xl shadow-blue-950/20 backdrop-blur-sm">
-          <div className="mb-2 font-bold text-blue-100 uppercase tracking-wider flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+        <footer className="mt-8 mb-4 mx-4 p-4 border border-blue-500/50 rounded-2xl bg-slate-900 text-[8px] sm:text-[9px] text-slate-400 font-mono shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+          <div className="mb-2 font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
             System & Network Diagnostics
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
             <div className="flex flex-col gap-1">
-              <span><span className="text-blue-400/50">Device:</span> {deviceInfo.manufacturer} {deviceInfo.model} ({deviceInfo.platform})</span>
-              <span><span className="text-blue-400/50">Android:</span> <span className="text-emerald-500 font-bold">{androidVersion || 'N/A'}</span></span>
-              <span><span className="text-blue-400/50">Browser:</span> {browserInfo.name} <span className="text-emerald-500 font-bold">{browserInfo.version}</span></span>
-              <span><span className="text-blue-400/50">Status:</span> {isOnline ? '🟢 Online' : '🔴 Offline'}</span>
-              <span><span className="text-blue-400/50">Conn:</span> {connectionType}</span>
-              <span><span className="text-blue-400/50">VPN:</span> {ipInfo?.vpn ? 'Yes' : 'No'}</span>
-              <span><span className="text-blue-400/50">IP:</span> <span className="text-emerald-500 font-bold">{ipInfo?.ip || 'Loading...'}</span></span>
-              <span><span className="text-blue-400/50">Loc:</span> {ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'Loading...'}</span>
-              <span><span className="text-blue-400/50">Coords:</span> <span className="text-emerald-500 font-bold">{ipInfo ? `${ipInfo.lat}, ${ipInfo.lon}` : 'Loading...'}</span></span>
-              <span><span className="text-blue-400/50">Lang:</span> {language}</span>
+              <span><span className="text-slate-500">Device:</span> {deviceInfo.manufacturer} {deviceInfo.model} ({deviceInfo.platform})</span>
+              <span><span className="text-slate-500">Android:</span> <span className="text-emerald-700 font-bold">{androidVersion || 'N/A'}</span></span>
+              <span><span className="text-slate-500">Browser:</span> {browserInfo.name} <span className="text-emerald-700 font-bold">{browserInfo.version}</span></span>
+              <span><span className="text-slate-500">Status:</span> {isOnline ? '🟢 Online' : '🔴 Offline'}</span>
+              <span><span className="text-slate-500">Conn:</span> {connectionType}</span>
+              <span><span className="text-slate-500">VPN:</span> {ipInfo?.vpn ? 'Yes' : 'No'}</span>
+              <span><span className="text-slate-500">IP:</span> <span className="text-emerald-700 font-bold">{ipInfo?.ip || 'Loading...'}</span></span>
+              <span><span className="text-slate-500">Loc:</span> {ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'Loading...'}</span>
+              <span><span className="text-slate-500">Coords:</span> <span className="text-emerald-700 font-bold">{ipInfo ? `${ipInfo.lat}, ${ipInfo.lon}` : 'Loading...'}</span></span>
+              <span><span className="text-slate-500">Lang:</span> {language}</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span><span className="text-blue-400/50">Theme:</span> {theme}</span>
-              <span><span className="text-blue-400/50">HW:</span> <span className="text-emerald-500 font-bold">{hardware.memory}</span>GB RAM, <span className="text-emerald-500 font-bold">{hardware.cores}</span> Cores</span>
-              <span className="break-all"><span className="text-blue-400/50">GPU/Chip:</span> {hardware.gpu}</span>
-              <span className="break-all"><span className="text-blue-400/50">URL:</span> {window.location.origin}</span>
-              <span><span className="text-blue-400/50">Engine:</span> Vite</span>
-              <span><span className="text-blue-400/50">Server:</span> Nginx</span>
-              <span><span className="text-blue-400/50">Node:</span> <span className="text-emerald-500 font-bold">{serverInfo?.nodeVersion || 'Loading...'}</span></span>
-              <span><span className="text-blue-400/50">Env:</span> {(import.meta as any).env?.MODE || 'development'}</span>
-              <span><span className="text-blue-400/50">Zone:</span> {timeInfo.zone}</span>
+              <span><span className="text-slate-500">Theme:</span> {theme}</span>
+              <span><span className="text-slate-500">HW:</span> <span className="text-emerald-700 font-bold">{hardware.memory}</span>GB RAM, <span className="text-emerald-700 font-bold">{hardware.cores}</span> Cores</span>
+              <span className="break-all"><span className="text-slate-500">GPU/Chip:</span> {hardware.gpu}</span>
+              <span className="break-all"><span className="text-slate-500">URL:</span> {window.location.origin}</span>
+              <span><span className="text-slate-500">Engine:</span> Vite</span>
+              <span><span className="text-slate-500">Server:</span> Nginx</span>
+              <span><span className="text-slate-500">Node:</span> <span className="text-emerald-700 font-bold">{serverInfo?.nodeVersion || 'Loading...'}</span></span>
+              <span><span className="text-slate-500">Env:</span> {(import.meta as any).env?.MODE || 'development'}</span>
+              <span><span className="text-slate-500">Zone:</span> {timeInfo.zone}</span>
             </div>
           </div>
         </footer>
       </div>
+      <VoiceCommand />
+      <ClipboardButton scriptContent={generatedScript} />
     </div>
   );
 };
