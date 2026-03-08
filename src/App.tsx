@@ -421,7 +421,20 @@ const GitHubIssues: React.FC = () => {
 
 const App: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
-  const [config, setConfig] = useState<ScriptConfig>(INITIAL_CONFIG);
+  const [config, setConfig] = useState<ScriptConfig>(() => {
+    const saved = localStorage.getItem('gemini-ai-config');
+    if (!saved) return INITIAL_CONFIG;
+    try {
+      return { ...INITIAL_CONFIG, ...JSON.parse(saved) };
+    } catch (e) {
+      console.error('Failed to parse config from localStorage', e);
+      return INITIAL_CONFIG;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('gemini-ai-config', JSON.stringify(config));
+  }, [config]);
   const [autoCopyEnabled, setAutoCopyEnabled] = useState(false);
   const [serverInfo, setServerInfo] = useState<{nodeVersion: string, serverType: string, startTime: number} | null>(null);
   const [generationTime, setGenerationTime] = useState(0);

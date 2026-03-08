@@ -43,6 +43,9 @@ export const getActiveBridge = (): Bridge => {
           throw error;
         }
       },
+      getCPUInfo: async () => 'unknown',
+      getGPUInfo: async () => 'unknown',
+      getSystemSettings: async () => ({}),
     },
   };
 };

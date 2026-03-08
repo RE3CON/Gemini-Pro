@@ -8,5 +8,8 @@ export interface Bridge {
   hardware: {
     setDeXMode: (enabled: boolean) => Promise<void>;
     setBatteryOptimization: (enabled: boolean) => Promise<void>;
+    getCPUInfo: () => Promise<string>;
+    getGPUInfo: () => Promise<string>;
+    getSystemSettings: () => Promise<Record<string, any>>;
   };
 }

@@ -9,10 +9,19 @@ You need a userscript manager installed in your browser:
 - [AdGuard for Android](https://adguard.com/adguard-android.html) (Includes a built-in UserScript manager)
 
 ### AdGuard for Android Setup
-1. Download AdGuard for Android (I recommend the [Nightly build](https://adguard.com/adguard-android.html#nightly) for the latest features).
-2. Open AdGuard and go to **Extensions**.
-3. In the Extensions menu, you can add UserScripts and UserStyles to extend AdGuard's functionality.
-4. Tap **Add** to import the script.
+1. **Install AdGuard:** Download and install [AdGuard for Android](https://adguard.com/adguard-android.html).
+2. **Enable Userscripts:**
+   - Open the AdGuard app.
+   - Navigate to **Settings** > **Extensions**.
+   - Ensure the **Userscripts** toggle is switched to **ON**.
+   - Tap on **Userscripts** to enter the management menu.
+3. **Add the Script:**
+   - Tap the **+** (Add) button.
+   - Select **Add from URL**.
+   - Paste the following URL: `https://raw.githubusercontent.com/RE3CON/Gemini-AI/main/google-ai-identity.user.js`
+   - Tap **Add**.
+4. **Permissions:** AdGuard may ask for permission to access your browser data or modify network traffic. Grant these permissions to ensure the script can successfully spoof your fingerprint and block tracking.
+5. **Verification:** Open your browser (e.g., Kiwi or Yandex) and visit a Google AI site. The script should now be active.
 
 ## Installation Steps
 

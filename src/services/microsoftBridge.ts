@@ -37,5 +37,8 @@ export const microsoftBridge: MicrosoftBridge = {
   hardware: {
     setDeXMode: async (enabled: boolean) => {},
     setBatteryOptimization: async (enabled: boolean) => {},
+    getCPUInfo: async () => 'unknown',
+    getGPUInfo: async () => 'unknown',
+    getSystemSettings: async () => ({}),
   },
 };

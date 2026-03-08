@@ -27,8 +27,8 @@ Sovereign fingerprint protection for Google AI & LLM environments. Merged Golden
 
 ## Overview
 
-This project provides an advanced Tampermonkey/Violentmonkey script designed to harden your browser fingerprint against tracking and behavioral analysis, specifically tailored for Google's AI environments (Gemini, AI Studio, NotebookLM, etc.). 
-
+This project provides an advanced AdGuard Android UserScript Extension, Tampermonkey/Violentmonkey script designed to harden your browser fingerprint against tracking and behavioral analysis, specifically tailored for Google's AI environments (Gemini, AI Studio, NotebookLM, etc.). 
+*Note: For Android users, the AdGuard Android UserScript Extension is highly recommended for optimal compatibility.*
 It includes active modules for:
 - **Hardware Spoofing:** Simulates a Google Pixel 11 Pro XL / Tensor G6 / 16GB environment. *Note: This is largely a placebo. True hardware spoofing requires ADB commands, root access, and the ability to modify internal browser files like `chrome://local-state/`, as well as accessing `chrome://chrome-urls/` and `chrome://flags/`, which cannot be achieved via a standard UserScript.*
 
@@ -57,7 +57,7 @@ The following flags are currently enabled in the environment:
 
 ## How to Use
 
-1. **Install an Extension:** Install a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/) in your browser.
+1. **Install an Extension:** Install a userscript manager like [AdGuard Android UserScript Extension, Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/) in your browser.
 2. **Get the Script:** 
    - Click the **Install UserScript** badge at the top of this page to install directly from GitHub.
    - Alternatively, copy the script from the [Web App](https://re3con.github.io/Gemini-AI/).
@@ -120,6 +120,16 @@ The core logic inside `google-ai-identity.user.js` is highly modular. You can ea
 Detailed documentation is available in our [Project Wiki](https://github.com/RE3CON/Gemini-AI/wiki). 
 
 The wiki is automatically synchronized with the `docs/` folder in this repository via GitHub Actions.
+
+### Advanced Documentation
+- [Advanced ADB Spoofing & Chrome Flag Injection](docs/ADBAdvancedSpoofing.md)
+- [Configuration Persistence](docs/ConfigurationPersistence.md)
+- [In-Memory Spoofing & Fingerprint Hardening](docs/InMemorySpoofing.md)
+- [Build Guides: UserScript & Chromium for Android](docs/UserScriptBuildInstructions.md)
+- [Chromium Implementation Guide](docs/ChromiumImplementationGuide.md)
+- [Android Browser Debugging & Developer Tools](docs/AndroidDebugging.md)
+- [Achieving a "Desktop-Like" Experience in Android Chromium](docs/DesktopLikeExperience.md)
+- [Maximum Capacity Android Chromium Build: Dynamic Configuration](docs/MaximumCapacityBuild.md)
 
 ## Bug Tracker & Forum
 

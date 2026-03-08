@@ -56,5 +56,8 @@ export const samsungBridge: SamsungBridge = {
   hardware: {
     setDeXMode: async (enabled: boolean) => getNative()?.hardware?.setDeXMode?.(enabled),
     setBatteryOptimization: async (enabled: boolean) => getNative()?.hardware?.setBatteryOptimization?.(enabled),
+    getCPUInfo: async () => getNative()?.hardware?.getCPUInfo?.() ?? 'unknown',
+    getGPUInfo: async () => getNative()?.hardware?.getGPUInfo?.() ?? 'unknown',
+    getSystemSettings: async () => getNative()?.hardware?.getSystemSettings?.() ?? {},
   },
 };
