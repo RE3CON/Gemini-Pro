@@ -25,6 +25,7 @@ import { clipboardService } from './services/clipboardService';
 import { sendSocketMessage, addSocketListener } from './services/socketService';
 import { getActiveBridge } from './services/bridgeService';
 
+import { AdvancedConfiguration } from './components/AdvancedConfiguration';
 import { CommandPalette } from './components/CommandPalette';
 import { INITIAL_CONFIG } from './constants/initialConfig';
 
@@ -457,7 +458,7 @@ const App: React.FC = () => {
   const [fritzBoxData, setFritzBoxData] = useState<any>(null);
   const [remoteVersion, setRemoteVersion] = useState<string | null>(null);
   const [isCheckingVersion, setIsCheckingVersion] = useState(false);
-  const [activeTab, setActiveTab] = useState<'configurator' | 'readme' | 'troubleshooting' | 'license' | 'forum' | 'security'>('configurator');
+  const [activeTab, setActiveTab] = useState<'configurator' | 'readme' | 'troubleshooting' | 'license' | 'forum' | 'security' | 'advanced'>('configurator');
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     performance_max: false,
     accessibility_core: false,
@@ -1260,6 +1261,12 @@ const App: React.FC = () => {
             >
               <Shield size={16} /> Security
             </button>
+            <button 
+              onClick={() => setActiveTab('advanced')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === 'advanced' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
+            >
+              <Settings size={16} /> Advanced
+            </button>
           </div>
 
           {activeTab === 'configurator' && (
@@ -1369,6 +1376,9 @@ const App: React.FC = () => {
 
           {activeTab === 'forum' && (
             <GitHubIssues />
+          )}
+          {activeTab === 'advanced' && (
+            <AdvancedConfiguration />
           )}
         </div>
 

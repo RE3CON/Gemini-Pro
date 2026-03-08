@@ -63,6 +63,16 @@ class SamsungBridgeInterface {
 webView.addJavascriptInterface(SamsungBridgeInterface(), "Android")
 ```
 
+## UI Mockups
+
+Below are the mockups for the Advanced Configuration UI on different devices.
+
+### Smartphone View
+![Smartphone UI](docs/smartphone_mockup.png)
+
+### Tablet View
+![Tablet UI](docs/tablet_mockup.png)
+
 ## PWA Installation
 
 Gemini-AI is a PWA. You can install it to your device's home screen for a native-like experience.
