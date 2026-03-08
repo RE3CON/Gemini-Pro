@@ -4,10 +4,13 @@ import { getActiveBridge } from './bridgeService';
 initSocket();
 
 addSocketListener((data) => {
-  if (data.type === 'CLIPBOARD_UPDATE') {
+  if (data.type === 'CLIPBOARD_UPDATE' && data.text) {
     // Update local clipboard
-    navigator.clipboard.writeText(data.text);
-    console.log('Clipboard updated from remote:', data.text);
+    try {
+      navigator.clipboard.writeText(data.text);
+    } catch (err) {
+      console.error('Failed to write to clipboard:', err);
+    }
   }
 });
 

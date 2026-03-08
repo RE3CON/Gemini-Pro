@@ -44,12 +44,14 @@ export const generateUserScript = (config: ScriptConfig): string => {
   if (config.enableGrokBridge) connectors.push('x_grok_access');
 
   // 6. Dev Ecosystem MAX
+  if (config.enableGitHub) connectors.push('github_enterprise', 'github_copilot', 'github_actions', 'github_codespaces', 'github_projects');
+  if (config.enableGitLab) connectors.push('gitlab_ultimate');
   if (config.enableReplit) connectors.push('replit_v12_engine', 'replit_ghostwriter', 'replit_deploy', 'replit_bounty_hunter', 'replit_teams');
   if (config.enableProjectIDX) connectors.push('google_idx_ide', 'idx_android_emulator', 'idx_web_preview');
   if (config.enableGitPod) connectors.push('gitpod_workspace', 'gitpod_io');
   if (config.enableGlitch) connectors.push('glitch_editor', 'glitch_remix');
   if (config.enableCloudShell) connectors.push('google_cloud_shell', 'cloud_code');
-  if (config.enableDockerHub) connectors.push('docker_hub_registry', 'docker_build_cloud');
+  if (config.enableDockerHub) connectors.push('docker_hub', 'docker_hub_registry', 'docker_build_cloud');
   if (config.enableKubernetes) connectors.push('google_kubernetes_engine', 'k8s_dashboard');
   if (config.enableCircleCI) connectors.push('circleci_pipeline');
   if (config.enableTravisCI) connectors.push('travisci_build');
@@ -150,11 +152,6 @@ export const generateUserScript = (config: ScriptConfig): string => {
   if (config.enableAppsScript) connectors.push('google_apps_script', 'script_editor_v2');
   if (config.enableVertexAI) connectors.push('vertex_ai_platform', 'vertex_model_garden');
   if (config.enableFirebase) connectors.push('firebase_console', 'firebase_hosting');
-  
-  // Developer (Maximum GitHub)
-  if (config.enableGitHub) connectors.push('github_enterprise', 'github_copilot', 'github_actions', 'github_codespaces', 'github_projects');
-  if (config.enableGitLab) connectors.push('gitlab_ultimate');
-  if (config.enableDockerHub) connectors.push('docker_hub', 'docker_build_cloud');
   
   // Project & Product
   if (config.enableJira) connectors.push('jira_cloud', 'confluence');
@@ -399,13 +396,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
 
   const diagnosticsScript = `
     // --- 9. STEALTH DIAGNOSTICS & SELF-HEALING ---
-    console.group("🚀 ILLUSION-STEALTH DIAGNOSTICS");
-    console.log("SPOOF TARGET:", "${config.spoofPixel11ProXL ? '📱 Pixel 11 Pro XL (Android 17)' : 'Off'}");
-    console.log("Gemini 3.0:", "${preferV3 ? '✅ Active (2026 Preview)' : 'Legacy'}");
-    console.log("Samsung:", "${config.enableSamsungEcosystem ? '🟦 Native Bridge Injected' : 'Standard'}");
-    ${(config.enableBillingGradeBypass || config.enableBucketOverride) ? `console.warn("⚠️ BILLING OVERRIDE ACTIVE. SERVER CHECKS MAY FLAG ACCOUNT.");` : ''}
-    
-    // SELF-HEALING: Integrity Check
+    // Diagnostics disabled in production.
     setTimeout(() => {
         const checks = {
             'GlobalBridge': !!window.IllusionBridge,
@@ -414,11 +405,8 @@ export const generateUserScript = (config: ScriptConfig): string => {
         };
         const failed = Object.keys(checks).filter(k => !checks[k]);
         if (failed.length > 0) {
-            console.error("❌ INTEGRITY FAILURE:", failed.join(", "));
             // Re-apply critical patches if needed (simplified)
             if (failed.includes('GlobalBridge') && typeof applySmartBridge === 'function') applySmartBridge();
-        } else {
-            console.log("✅ SYSTEM INTEGRITY VERIFIED");
         }
     }, 5000);
     console.groupEnd();
@@ -535,7 +523,7 @@ export const generateUserScript = (config: ScriptConfig): string => {
     };
     
     // --- 0. ACCESSIBILITY MODE ---
-    if (typeof window !== 'undefined' && window.Android) { console.log("Native WebView Bridge Detected - Accessibility Mode Optimized"); }
+    // Accessibility Mode Optimized
 
     // --- 1. SOVEREIGN CONSTANTS (v5 RESTORED) ---
     const REPLIT_ID = 'recon_master_dev';
@@ -621,7 +609,7 @@ ${flagsString}
             // Check for WebKit Speech Recognition (Chrome/Android WebView standard)
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (SpeechRecognition) {
-                console.log("🎙️ INFINITE DICTATION: Module Loaded");
+                // Module Loaded
                 
                 // We inject a floating toggle button for the user
                 const toggleBtn = document.createElement('button');
@@ -735,7 +723,7 @@ ${flagsString}
                 // Feedback
                 snatcherBtn.style.background = "#000";
                 snatcherBtn.innerHTML = "🚫";
-                console.log("🛠️ EMERGENCY EXIT: Payload & URL cleared.");
+                // Payload & URL cleared.
                 setTimeout(() => location.reload(), 500); 
             }, 1500); // 1.5 Sekunden für Reset
         };
@@ -837,7 +825,7 @@ ${flagsString}
         const log = (msg, type='INFO') => {
             const entry = "[" + new Date().toISOString() + "] [" + type + "] " + msg;
             window.IllusionLogger.push(entry);
-            console.log(entry);
+            // Entry logged
         };
         window.onerror = (msg, url, line) => log(msg + " @ " + line, 'ERROR');
         log("Illusion Script Initialized - v27.0.0");
@@ -946,8 +934,8 @@ ${flagsString}
              try {
                  Object.defineProperty(window, 'OneDriveNative', {
                      value: {
-                         openPicker: (options) => console.log("Opening Native OneDrive Picker", options),
-                         saveToOneDrive: (file) => console.log("Saving to OneDrive", file)
+                         openPicker: (options) => {},
+                         saveToOneDrive: (file) => {},
                      },
                      writable: false
                  });
@@ -1391,7 +1379,7 @@ ${flagsString}
                 }, 1);
             };
             window.cancelIdleCallback = (id) => clearTimeout(id);
-            console.log("🚀 MAIN THREAD LIBERATED: Idle Tasks Accelerated");
+            // Idle Tasks Accelerated
         } catch(e) {}
         ` : ''}
     };

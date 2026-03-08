@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import { GoogleGenAI } from "@google/genai";
+import { generateLogo } from './services/logoService';
 import { Switch } from './components/Switch';
 import { CodeBlock } from './components/CodeBlock';
 import { VoiceCommand } from './components/VoiceCommand';
@@ -25,270 +25,8 @@ import { clipboardService } from './services/clipboardService';
 import { sendSocketMessage, addSocketListener } from './services/socketService';
 import { getActiveBridge } from './services/bridgeService';
 
-// --- INITIAL CONFIGURATION (FULL RESTORATION) ---
-export const INITIAL_CONFIG: ScriptConfig = {
-  version: '27.9.23-FULL-RESTORE',
-  
-  // --- RECOMMENDED DEFAULTS ---
-  // Core Identity & Speed
-  spoofPixel11ProXL: true,
-  enableOmniMaximus: true,
-  enableLudicrousSpeed: true,
-  enableHyperVelocity: true,
-  enableMainThreadLiberation: true,
-
-  // Ecosystem & Bridges (Silent/Invisible)
-  enableSamsungEcosystem: true, 
-  enableSamsungPass: true,
-  enableSamsungWallet: true,
-  enableDeXMode: true,
-  enableWhatsAppBridge: true,
-  enableGoogleWorkspace: true,
-  enableGoogleDrive: true,
-  enableYouTube: true,
-
-  // Models
-  enableGemini3_1Flash: true,
-  enableGemini3_1Pro: true,
-  enableGemini3_1FlashImage: true,
-  enableGemini3_0Flash: true,
-  enableGemini3_0Pro: true,
-  enableGemini2_5FlashImage: true,
-  enableGemini2_5NativeAudio: true,
-  enableGemini2_5TTS: true,
-  enableVeo3_1Fast: true,
-  enableVeo3_1Generate: true,
-  enableDeepThink: true,
-  enableHighFidelityMedia: true,
-  
-  // Input
-  enableNativeClipboard: true, 
-  enableNativePrint: false,
-  enableHapticFeedback: true,
-  enableContinuousVoice: true,
-  enableContextSnatcher: true,
-  enableVoiceCommandMode: true,
-  enableLogConsole: false,
-  
-  // Dev
-  enableTermuxBridge: true,
-  enableAShellBridge: false,
-  
-  // Models Legacy (Disabled)
-  enableMariner: false,
-  enableCanvasPro: false,
-  enableUnlimitedBudget: false,
-  enableExperimentalModels: false,
-  enableProjectAstra: false,
-  
-  // Commerce
-  enableKleinanzeigen: false,
-  enableEbayNative: false,
-  enableAmazonBridge: false,
-  enableAliExpress: false,
-  enableIdealo: false,
-  enableBilliger: false,
-  enableGeizhals: false,
-  enableStripe: false,
-  enableShopify: false,
-
-  // AI Bridge
-  enableBixbyFusion: false,
-  enableChatGPTBridge: false,
-  enableDeepSeekBridge: false,
-  enableCoPilotBridge: false,
-  enableGrokBridge: false,
-  
-  // Tone
-  enableToneProfessional: false,
-  enableToneAcademic: false,
-  enableToneCreative: false,
-  enableFormatJson: false,
-  enableFormatMarkdown: false,
-  
-  // Enterprise Core
-  enableGitHub: false,
-  enableGitLab: false,
-  enableDockerHub: false,
-  enableJira: false,
-  enableSlack: false,
-  enableSalesforce: false,
-  enableFigma: false,
-  enableNotion: false,
-  enableLinear: false,
-  enableReplit: false,
-  enableTrello: false,
-  enableCloudStorage: false,
-
-  // Enterprise Extended
-  enableDiscord: false,
-  enableZoom: false,
-  enableTeams: false,
-  enableAsana: false,
-  enableMonday: false,
-  enableClickUp: false,
-  enableStackBlitz: false,
-  enableCodeSandbox: false,
-  enableTableau: false,
-  enablePowerBI: false,
-  enableSnowflake: false,
-  enableHubSpot: false,
-
-  // Dev Max
-  enableProjectIDX: false,
-  enableGitPod: false,
-  enableGlitch: false,
-  enableCloudShell: false,
-  enableKubernetes: false,
-  enableCircleCI: false,
-  enableTravisCI: false,
-
-  // Commerce Support (Legacy)
-  enableZendesk: false,
-  enableIntercom: false,
-  
-  // Media
-  enableSpotify: false,
-  enableAppleMusic: false,
-  enableNetflix: false,
-  enableTwitch: false,
-  enableTwitter: false,
-  enableLinkedIn: false,
-  enableReddit: false,
-  enableInstagram: false,
-  enableTelegram: false,
-
-  // Lifestyle
-  enableCoinbase: false,
-  enableRobinhood: false,
-  enableYahooFinance: false,
-  enableUber: false,
-  enableAirbnb: false,
-  enableBooking: false,
-  enableEvernote: false,
-  enableOneNote: false,
-  enableTodoist: false,
-  enableCanva: false,
-  enableAdobeCC: false,
-  
-  // Legacy
-  enableWolframAlpha: false,
-  enableKayak: false,
-  enableOpenTable: false,
-  enableInstacart: false,
-  enableZillow: false,
-  
-  // Social
-  enableMessengerBridge: false,
-  enableSignalBridge: false,
-  enableSMSBridge: false,
-  
-  // Workspace
-  enableGoogleKeep: false,
-  enableGoogleTasks: false,
-  enableGoogleMeet: false,
-  enableGoogleChat: false,
-  enableGoogleColab: false,
-  enableAppSheet: false,
-  enableSmartCanvas: false,
-  
-  // Exports
-  enableExportToDocs: false,
-  enableExportToGmail: false,
-  enableExportToSheets: false,
-  enableDriveMount: false,
-  enableExportToColab: false,
-  enableExportToReplit: false,
-  enableExportToKaggle: false,
-  enableExportToDeepNote: false,
-  enableExportToGist: false,
-  enableExportToZapier: false,
-  enableExportToMake: false,
-  enableExportToIFTTT: false,
-
-  // Native Google
-  enableGoogleFlights: false,
-  enableGoogleHotels: false,
-  enableGoogleMaps: false,
-  
-  // Workspace Extended
-  enableGoogleForms: false,
-  enableGoogleSites: false,
-  enableGoogleBlogger: false,
-  enableWordPressIntegration: false,
-  enableTumblrIntegration: false,
-  enableMediumIntegration: false,
-  enableGoogleEarth: false,
-  
-  // Creative
-  enableGoogleVids: false,
-  enableLookerStudio: false,
-  
-  // Dev
-  enableAppsScript: false,
-  enableVertexAI: false,
-  enableFirebase: false,
-  enableGeminiCodeAssist: false,
-  
-  enableMicrosoft365: false,
-  enableOneDrive: false,
-  
-  // Samsung (Rest)
-  enableSamsungNotes: false,
-  enableSamsungGallery: false,
-  enableSamsungReminder: false,
-  enableSamsungCalendar: false,
-  
-  // Productivity
-  enableAdvancedPDF: false,
-  enableStylusOptimizations: false,
-  
-  // Misc
-  spoofLocation: false,
-  enableSovereignState: false,
-  
-  // Security
-  enableSurgicalCookieSanitizer: false,
-  enableWebRTCShield: false,
-  enableTelemetryFirewall: false,
-  enableCanvasNoise: false,
-  enableAudioNoise: false,
-  
-  // System
-  enableAdGuardNightly: false,
-  enableCanaryBuild: false,
-  
-  // Danger
-  enableBillingGradeBypass: false,
-  enableBucketOverride: false,
-  enableExtremeThinking: false,
-  
-  // Internal
-  enableDeveloperTools: false,
-  enableSREGodMode: false,
-  enableStagingRouting: false,
-  enableQuantumCode: false,
-  enablePsychModel: false,
-  enableMemoryManager: false,
-  
-  // Hardware
-  enableTensorG6: false,
-  enableNeuralCore: false,
-  enableGPUSpoof: false,
-  enableAudioSpoof: false,
-  enableScreenSpoof: false,
-  enableBatterySpoof: false,
-  
-  // Integrity
-  enableIntegrityBypass: false,
-  enableRegionShift: false,
-  enableSIMSpoof: false,
-  enableSamsungBypass: false,
-  enableCookieGuard: false,
-  enableDeepResearchV2: false,
-  enableSafetyOverride: false,
-  enableFutureLabs: false,
-};
+import { CommandPalette } from './components/CommandPalette';
+import { INITIAL_CONFIG } from './constants/initialConfig';
 
 const MERGED_SCRIPT = `${generateUserScript(INITIAL_CONFIG)}`;
 
@@ -472,7 +210,6 @@ const SECTION_DEFINITIONS = [
       { key: 'enableGitPod', label: 'GitPod' },
       { key: 'enableGlitch', label: 'Glitch' },
       { key: 'enableCloudShell', label: 'Cloud Shell' },
-      { key: 'enableDockerHub', label: 'Docker Hub' },
       { key: 'enableKubernetes', label: 'Kubernetes (GKE)' },
       { key: 'enableStackBlitz', label: 'StackBlitz' },
       { key: 'enableCodeSandbox', label: 'CodeSandbox' },
@@ -683,6 +420,7 @@ const GitHubIssues: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [config, setConfig] = useState<ScriptConfig>(INITIAL_CONFIG);
   const [autoCopyEnabled, setAutoCopyEnabled] = useState(false);
   const [serverInfo, setServerInfo] = useState<{nodeVersion: string, serverType: string, startTime: number} | null>(null);
@@ -923,7 +661,7 @@ const App: React.FC = () => {
     // Check clipboard permission
     navigator.permissions.query({ name: 'clipboard-read' as PermissionName })
       .then(result => {
-        console.log('Clipboard read permission state:', result.state);
+      // Permission checked
       })
       .catch(err => {
         console.error('Clipboard permission query not supported:', err);
@@ -934,10 +672,10 @@ const App: React.FC = () => {
     addSocketListener((data) => {
       if (data.type === 'CONFIG_SYNC') {
         setConfig(data.config);
-        console.log('Config synced from remote:', data.config);
+        // Config synced
       } else if (data.type === 'FRITZBOX_DATA') {
         setFritzBoxData(data);
-        console.log('FritzBox data received:', data);
+        // FritzBox data
       }
     });
   }, []);
@@ -954,96 +692,63 @@ const App: React.FC = () => {
   };
 
   const handleGenerateLogo = async () => {
-    // Check for API key
-    if (window.aistudio && !(await window.aistudio.hasSelectedApiKey())) {
-      await window.aistudio.openSelectKey();
+    // 1. Check for API key presence
+    if (window.aistudio) {
+      const hasKey = await window.aistudio.hasSelectedApiKey();
+      if (!hasKey) {
+        showToast('info', 'Please select a valid API key from a paid project to generate images.');
+        await window.aistudio.openSelectKey();
+        return; // Return early to let user select key, they can click again after
+      }
     }
 
     // 2. Aggressive Caching (Client-side)
-    // Only use cache if not explicitly regenerating
+    // Only use cache if not explicitly regenerating (isGeneratingLogo is false when button is first clicked)
     const cachedLogo = localStorage.getItem('re3con_cached_logo');
-    if (cachedLogo && !isGeneratingLogo) {
-      setLogoUrl(cachedLogo);
+    if (cachedLogo && !isGeneratingLogo && logoUrl) {
+      // If we already have a logo and just clicked, maybe we want to refresh?
+      // But if we don't have one, we definitely want to generate.
     }
     
     setIsGeneratingLogo(true);
     try {
-      // Platform injected API key
+      // Platform injected API key for paid models
       const apiKey = (process.env as any).API_KEY || (process.env as any).GEMINI_API_KEY;
       
       if (!apiKey) {
+        showToast('error', 'API Key not found. Please ensure you have selected a key.');
         if (window.aistudio) await window.aistudio.openSelectKey();
-        throw new Error("No API key available. Please select an API key.");
+        setIsGeneratingLogo(false);
+        return;
       }
 
-      const ai = new GoogleGenAI({ apiKey });
+      const newLogoUrl = await generateLogo(apiKey);
+      setLogoUrl(newLogoUrl);
+      localStorage.setItem('re3con_cached_logo', newLogoUrl);
       
-      // Try models in order of speed/reliability
-      let imageData = '';
-      let error: any = null;
-      
-      const models = ['gemini-2.5-flash-image', 'gemini-3.1-flash-image-preview'];
-      
-      for (const modelName of models) {
-        try {
-          console.log(`Attempting logo generation with ${modelName}...`);
-          const response = await ai.models.generateContent({
-            model: modelName,
-            contents: {
-              parts: [
-                {
-                  text: 'Cybersecurity app logo. Vector art, neon gradients, futuristic shield, no text, transparent background.',
-                },
-              ],
-            }
-          });
-
-          for (const part of response.candidates?.[0]?.content?.parts || []) {
-            if (part.inlineData) {
-              imageData = part.inlineData.data;
-              break;
-            }
-          }
-          
-          if (imageData) break;
-        } catch (e: any) {
-          console.error(`Failed with ${modelName}:`, e);
-          error = e;
-        }
+      // Save to server for GitHub push
+      try {
+        await fetch('/api/save-logo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageData: newLogoUrl.split(',')[1] })
+        });
+      } catch (saveErr) {
+        console.error("Failed to save logo to server:", saveErr);
       }
 
-      if (imageData) {
-        const newLogoUrl = `data:image/png;base64,${imageData}`;
-        setLogoUrl(newLogoUrl);
-        localStorage.setItem('re3con_cached_logo', newLogoUrl);
-        
-        // Save to server for GitHub push
-        try {
-          await fetch('/api/save-logo', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageData })
-          });
-        } catch (saveErr) {
-          console.error("Failed to save logo to server:", saveErr);
-        }
-
-        showToast('success', 'Logo generated successfully!');
-      } else {
-        throw error || new Error("Failed to generate logo data.");
-      }
+      showToast('success', 'Logo generated successfully!');
     } catch (error: any) {
       console.error('Error generating logo:', error);
       const errorMsg = error.message || "";
       
-      if ((errorMsg.includes("API_KEY_INVALID") || errorMsg.includes("API key not valid")) && window.aistudio) {
+      if ((errorMsg.includes("API_KEY_INVALID") || errorMsg.includes("not found") || errorMsg.includes("API key not valid")) && window.aistudio) {
+        showToast('error', 'Invalid API key or project not found. Please select a valid, paid project key.');
         await window.aistudio.openSelectKey();
-        showToast('error', 'Invalid API key. Please select a valid, paid project key.');
       } else if (errorMsg.includes("RESOURCE_EXHAUSTED") || errorMsg.includes("quota")) {
         showToast('error', 'Quota exceeded. Please select a different project.');
       } else {
-        showToast('error', 'Failed to generate logo. Please select a valid API key.');
-        if (window.aistudio) await window.aistudio.openSelectKey();
+        showToast('error', `Generation failed: ${errorMsg || 'Please check your connection and API key.'}`);
       }
     } finally {
       setIsGeneratingLogo(false);
@@ -1149,6 +854,17 @@ const App: React.FC = () => {
       }
     };
   }, [downloadUrl]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const toggle = (key: keyof ScriptConfig) => {
     setConfig(prev => ({ ...prev, [key]: !prev[key] }));
@@ -1750,6 +1466,11 @@ const App: React.FC = () => {
       </div>
       <VoiceCommand />
       <ClipboardButton scriptContent={generatedScript} />
+      <CommandPalette 
+        isOpen={isPaletteOpen} 
+        onClose={() => setIsPaletteOpen(false)} 
+        onToggleFeature={toggle}
+      />
     </div>
   );
 };

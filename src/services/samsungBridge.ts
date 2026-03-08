@@ -50,13 +50,11 @@ export const samsungBridge: SamsungBridge = {
       const native = getNative();
       if (native?.notes?.saveNote) {
         await native.notes.saveNote(title, content);
-      } else {
-        console.log(`[Web Fallback] Saving note: ${title}`, content);
       }
     },
   },
   hardware: {
-    setDeXMode: async (enabled: boolean) => getNative()?.hardware?.setDeXMode?.(enabled) ?? console.log('DeX mode set to:', enabled),
-    setBatteryOptimization: async (enabled: boolean) => getNative()?.hardware?.setBatteryOptimization?.(enabled) ?? console.log('Battery optimization set to:', enabled),
+    setDeXMode: async (enabled: boolean) => getNative()?.hardware?.setDeXMode?.(enabled),
+    setBatteryOptimization: async (enabled: boolean) => getNative()?.hardware?.setBatteryOptimization?.(enabled),
   },
 };

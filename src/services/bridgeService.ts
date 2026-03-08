@@ -16,20 +16,32 @@ export const getActiveBridge = (): Bridge => {
     },
     hardware: {
       setDeXMode: async (enabled: boolean) => {
-        const response = await fetch('/api/samsung/dex', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ enabled }),
-        });
-        return response.json();
+        try {
+          const response = await fetch('/api/samsung/dex', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled }),
+          });
+          if (!response.ok) throw new Error('Failed to set DeX mode');
+          return await response.json();
+        } catch (error) {
+          console.error('DeX mode error:', error);
+          throw error;
+        }
       },
       setBatteryOptimization: async (enabled: boolean) => {
-        const response = await fetch('/api/samsung/battery', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ enabled }),
-        });
-        return response.json();
+        try {
+          const response = await fetch('/api/samsung/battery', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled }),
+          });
+          if (!response.ok) throw new Error('Failed to set battery optimization');
+          return await response.json();
+        } catch (error) {
+          console.error('Battery optimization error:', error);
+          throw error;
+        }
       },
     },
   };

@@ -6,7 +6,7 @@ export const initSocket = () => {
     try {
       const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
       ws = new WebSocket(`${protocol}${window.location.host}`);
-      ws.onopen = () => console.log('WebSocket connected');
+      ws.onopen = () => {};
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
@@ -16,7 +16,6 @@ export const initSocket = () => {
         }
       };
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
         ws = null;
       };
     } catch (e) {
@@ -33,6 +32,12 @@ export const addSocketListener = (listener: (data: any) => void) => {
 
 export const sendSocketMessage = (type: string, payload: any) => {
   if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ type, ...payload }));
+    try {
+      ws.send(JSON.stringify({ type, ...payload }));
+    } catch (e) {
+      console.error('Failed to send socket message:', e);
+    }
+  } else {
+    console.warn('Socket not connected, message dropped:', type);
   }
 };
